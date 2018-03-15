@@ -1,7 +1,28 @@
 import 'package:flutter/material.dart';
 import '../style/style.dart';
+import 'dart:developer';
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
+  @override
+  createState() => new HomeState();
+}
+
+class HomeState extends State<Home> {
+
+  @override
+  void initState() {
+    super.initState();
+    debugPrint('qiaoyuwen');
+  }
+
+  _getHotCities() async {
+
+  }
+
+  _goLogin(BuildContext context) {
+    Navigator.of(context).pushNamed("/login");
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
@@ -115,9 +136,5 @@ class Home extends StatelessWidget {
       ),
       backgroundColor: Style.emptyBackgroundColor,
     );
-  }
-
-  void _goLogin(BuildContext context) {
-    Navigator.of(context).pushNamed("/login");
   }
 }
