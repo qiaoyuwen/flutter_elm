@@ -2,7 +2,7 @@ import 'http.dart';
 import '../model/city.dart';
 
 class Api {
-  static final String _host = 'http://169.254.250.193:8001';
+  static final String _host = 'http://169.254.50.16:8001';
   static getHotCities() async {
     var cities = const [];
     var uri = Uri.parse('$_host/v1/cities?type=hot');

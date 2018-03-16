@@ -9,8 +9,37 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
+  final _lineHeight = 40.0;
+  final _gPadding = new EdgeInsets.symmetric(horizontal: Style.gPadding);
+  final _gMargin = new EdgeInsets.only(bottom: 10.0);
+  final _btnPadding = new EdgeInsets.symmetric(horizontal: 5.0);
+  final _textStyle = Style.textStyle;
+  final _tipTextStyle = new TextStyle(
+    color: const Color(0xFF9F9F9F),
+    fontSize: 12.0,
+  );
+  final _hotTextStyle = new TextStyle(
+    color: Style.primaryColor,
+    fontSize: Style.fontSize,
+  );
+  final _bottomBorder = new Border(
+    bottom: new BorderSide(
+      color: Style.borderColor,
+    ),
+  );
+
+  final _bottomRightBorder = new Border(
+    bottom: new BorderSide(
+      color: Style.borderColor,
+    ),
+    right: new BorderSide(
+      color: Style.borderColor,
+    ),
+  );
+
   List<City> _hotCities = [];
   Map<String, List<City>> _citiesGroup = new Map();
+  List<String> _citiesGroupKeys = [];
 
   @override
   void initState() {
@@ -23,6 +52,8 @@ class HomeState extends State<Home> {
     });
     Api.getCitiesGroup().then((Map<String, List<City>> citiesGroup) {
       setState(() {
+        _citiesGroupKeys = citiesGroup.keys.toList();
+        _citiesGroupKeys.sort((s1, s2) => s1.compareTo(s2));
         _citiesGroup = citiesGroup;
       });
     });
@@ -35,202 +66,92 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
-
-    var hotCityColumn = new Container(
-      margin: new EdgeInsets.only(bottom: 10.0),
-      child: new Column(
-        children: <Widget>[],
-      ),
-    );
-    Row lastRow;
-    for (var i = 0; i < _hotCities.length; ++i) {
-      if (i % 4 == 0) {
-        lastRow = new Row(children: <Widget>[],);
-        (hotCityColumn.child as Column).children.add(lastRow);
-      }
-      lastRow.children.add(
-        new Expanded(
-          child: new GestureDetector(
-            child: new Container(
-              height: 40.0,
-              decoration: new BoxDecoration(
-                color: Style.backgroundColor,
-                border: new Border(
-                  bottom: new BorderSide(
-                    color: Style.borderColor,
-                  ),
-                  right: i % 4 == 3 ? BorderSide.none : new BorderSide(
-                    color: Style.borderColor,
-                  ),
-                ),
-              ),
-              child: new Center(
-                child: new Text(
-                  _hotCities[i].name,
-                  style: new TextStyle(
-                    fontSize: 15.0,
-                    color: Style.primaryColor,
-                  ),
-                ),
-              ),
-            ),
-            onTap: () => this._goLogin(context),
-          ),
-        ),
-      );
-    }
-
-    var cityGroupsColumn = new Column(
-      children: <Widget>[],
-    );
-    var keys = _citiesGroup.keys.toList();
-    keys.sort((s1, s2) => s1.compareTo(s2));
-    for (String key in keys) {
-      List<City> cities = _citiesGroup[key];
-      var groupColumn = new Column(
-        children: <Widget>[],
-      );
-      for (var i = 0; i < cities.length; ++i) {
-        if (i % 4 == 0) {
-          lastRow = new Row(children: <Widget>[],);
-          groupColumn.children.add(lastRow);
-        }
-        lastRow.children.add(
-          new Expanded(
-            child: new GestureDetector(
-              child: new Container(
-                height: 40.0,
-                decoration: new BoxDecoration(
-                  border: new Border(
-                    bottom: new BorderSide(
-                      color: Style.borderColor,
-                    ),
-                    right: i % 4 == 3 ? BorderSide.none : new BorderSide(
-                      color: Style.borderColor,
-                    ),
-                  ),
-                ),
-                child: new Center(
-                  child: new Text(
-                    cities[i].name,
-                    style: Style.textStyle,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ),
-              onTap: () => this._goLogin(context),
-            ),
-          ),
-        );
-        if (i == cities.length - 1 && lastRow.children.length < 4) {
-          lastRow.children.add(
-            new Expanded(
-              flex: 4 - lastRow.children.length,
-              child: new Container(),
-            ),
-          );
-        }
-      }
-
-      var columnItem = new Container(
-        color: Style.backgroundColor,
-        margin: new EdgeInsets.only(bottom: 10.0),
-        child: new Column(
-          children: <Widget>[
-            new Container(
-              height: 40.0,
-              padding: new EdgeInsets.symmetric(horizontal: Style.gPadding),
-              decoration: new BoxDecoration(
-                color: Style.backgroundColor,
-                border: new Border(
-                  bottom: new BorderSide(
-                    color: Style.borderColor,
-                  ),
-                  top: new BorderSide(
-                    color: Style.borderColor,
-                  ),
-                ),
-              ),
-              child: new Row(
-                children: <Widget>[
-                  new Text(
-                    key,
-                    style: Style.textStyle,
-                  ),
-                ],
-              ),
-            ),
-            groupColumn,
-          ],
-        ),
-      );
-      cityGroupsColumn.children.add(columnItem);
-    }
-
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(
-          'elm.qyw',
-        ),
-        centerTitle: false,
-        actions: <Widget>[
-          new GestureDetector(
-            onTap: () => this._goLogin(context),
-            child: new Container(
-              padding: ButtonTheme.of(context).padding,
-              child: new Center(
-                child: new Text(
-                  '登录|注册',
-                  style: themeData.primaryTextTheme.title,
-                ),
+      appBar: _buildAppBar(themeData),
+      body: _buildBody(),
+      backgroundColor: Style.emptyBackgroundColor,
+    );
+  }
+
+  Widget _buildAppBar(ThemeData themeData) {
+    return new AppBar(
+      title: new Text(
+        'elm.qyw',
+      ),
+      centerTitle: false,
+      actions: <Widget>[
+        new GestureDetector(
+          onTap: () => this._goLogin(context),
+          child: new Container(
+            padding: ButtonTheme.of(context).padding,
+            child: new Center(
+              child: new Text(
+                '登录|注册',
+                style: themeData.primaryTextTheme.title,
               ),
             ),
           ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBody() {
+    return new ListView.builder(
+      itemCount: 2 + _citiesGroupKeys.length,
+      itemBuilder: (context, i) {
+        if (i == 0) {
+          return _buildCityLocation();
+        } else if (i == 1) {
+          return _buildHotCityBlock();
+        } else {
+          return _buildCityGroupBlock(i - 2);
+        }
+      },
+    );
+  }
+
+  Widget _buildBlockContainer(Widget child) {
+    return new Container(
+      margin: _gMargin,
+      color: Style.backgroundColor,
+      child: child,
+    );
+  }
+
+  Widget _buildRowContainer(Widget child) {
+    return new Container(
+      padding: _gPadding,
+      height: _lineHeight,
+      decoration: new BoxDecoration(
+        border: _bottomBorder,
       ),
-      body: new ListView(
+      child: child,
+    );
+  }
+
+  Widget _buildCityLocation() {
+    return _buildBlockContainer(
+      new Column(
         children: <Widget>[
-          new Container(
-            padding: new EdgeInsets.symmetric(horizontal: Style.gPadding),
-            height: 40.0,
-            decoration: new BoxDecoration(
-              color: Style.backgroundColor,
-              border: new Border(
-                bottom: new BorderSide(
-                  color: Style.borderColor,
-                ),
-              ),
-            ),
-            child: new Row(
+          _buildRowContainer(
+            new Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 new Text(
                   '当前定位城市：',
-                  style: Style.textStyle,
+                  style: _textStyle,
                 ),
                 new Text(
                   '定位不准时，请在城市列表中选择',
-                  style: const TextStyle(
-                    color: const Color(0xFF9F9F9F),
-                    fontSize: 12.0,
-                  ),
+                  style: _tipTextStyle,
                 ),
               ],
             ),
           ),
           new GestureDetector(
-            child: new Container(
-              padding: new EdgeInsets.symmetric(horizontal: Style.gPadding),
-              height: 40.0,
-              decoration: new BoxDecoration(
-                color: Style.backgroundColor,
-                border: new Border(
-                  bottom: new BorderSide(
-                    color: Style.borderColor,
-                  ),
-                ),
-              ),
-              child: new Row(
+            child: _buildRowContainer(
+              new Row(
                 children: <Widget>[
                   new Expanded(
                     child: new Align(
@@ -247,22 +168,17 @@ class HomeState extends State<Home> {
             ),
             onTap: () => this._goLogin(context),
           ),
-          new Container(
-            margin: new EdgeInsets.only(top: 10.0),
-            padding: new EdgeInsets.symmetric(horizontal: Style.gPadding),
-            height: 40.0,
-            decoration: new BoxDecoration(
-              color: Style.backgroundColor,
-              border: new Border(
-                bottom: new BorderSide(
-                  color: Style.borderColor,
-                ),
-                top: new BorderSide(
-                  color: Style.borderColor,
-                ),
-              ),
-            ),
-            child: new Row(
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHotCityBlock() {
+    return _buildBlockContainer(
+      new Column(
+        children: <Widget>[
+          _buildRowContainer(
+            new Row(
               children: <Widget>[
                 new Text(
                   '热门城市',
@@ -271,11 +187,106 @@ class HomeState extends State<Home> {
               ],
             ),
           ),
-          hotCityColumn,
-          cityGroupsColumn,
+          _buildHotCities(),
         ],
       ),
-      backgroundColor: Style.emptyBackgroundColor,
     );
+  }
+
+  Widget _buildHotCities() {
+    var hotCityColumn = new Column(
+      children: <Widget>[],
+    );
+    Row lastRow;
+    for (var i = 0; i < _hotCities.length; ++i) {
+      if (i % 4 == 0) {
+        lastRow = new Row(children: <Widget>[],);
+        hotCityColumn.children.add(lastRow);
+      }
+      lastRow.children.add(
+        new Expanded(
+          child: _buildCityBtn(i, _hotCities[i].name, true),
+        ),
+      );
+      if (i == _hotCities.length - 1 && lastRow.children.length < 4) {
+        lastRow.children.add(
+          new Expanded(
+            flex: 4 - lastRow.children.length,
+            child: new Container(),
+          ),
+        );
+      }
+    }
+    return hotCityColumn;
+  }
+
+  Widget _buildCityBtn(int index, String text, isHot) {
+    return new GestureDetector(
+      child: new Container(
+        height: _lineHeight,
+        decoration: new BoxDecoration(
+          border: index % 4 == 3 ? _bottomBorder : _bottomRightBorder,
+        ),
+        child: new Container(
+          padding: _btnPadding,
+          alignment: Alignment.center,
+          child: new Text(
+            text,
+            style: isHot ? _hotTextStyle : _textStyle,
+            overflow: TextOverflow.ellipsis,
+            softWrap: false,
+          ),
+        ),
+      ),
+      onTap: () => this._goLogin(context),
+    );
+  }
+
+  Widget _buildCityGroupBlock(int index) {
+    return _buildBlockContainer(
+      new Column(
+        children: <Widget>[
+          _buildRowContainer(
+            new Row(
+              children: <Widget>[
+                new Text(
+                  _citiesGroupKeys[index],
+                  style: Style.textStyle,
+                ),
+              ],
+            ),
+          ),
+          _buildCityGroup(index),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCityGroup(int index) {
+    var groupColumn = new Column(
+      children: <Widget>[],
+    );
+    Row lastRow;
+    var cities = _citiesGroup[_citiesGroupKeys[index]];
+    for (var i = 0; i < cities.length; ++i) {
+      if (i % 4 == 0) {
+        lastRow = new Row(children: <Widget>[],);
+        groupColumn.children.add(lastRow);
+      }
+      lastRow.children.add(
+        new Expanded(
+          child: _buildCityBtn(i, cities[i].name, false),
+        ),
+      );
+      if (i == cities.length - 1 && lastRow.children.length < 4) {
+        lastRow.children.add(
+          new Expanded(
+            flex: 4 - lastRow.children.length,
+            child: new Container(),
+          ),
+        );
+      }
+    }
+    return groupColumn;
   }
 }
