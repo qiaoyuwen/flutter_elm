@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../style/style.dart';
-import 'dart:developer';
+import '../utils/api.dart';
+import 'dart:io';
+import 'dart:convert';
+import '../model/city.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -8,15 +11,17 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
+  List<City> _hotCities = [];
 
   @override
   void initState() {
     super.initState();
-    debugPrint('qiaoyuwen');
-  }
-
-  _getHotCities() async {
-
+    Api.getHotCites().then((cities) {
+      if (!mounted) return;
+      setState(() {
+        _hotCities = cities;
+      });
+    });
   }
 
   _goLogin(BuildContext context) {
@@ -26,6 +31,11 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final ThemeData themeData = Theme.of(context);
+
+    var hotCityColumn = new Column();
+    for (var i = 0; i < _hotCities.length; ++i) {
+
+    }
 
     return new Scaffold(
       appBar: new AppBar(
