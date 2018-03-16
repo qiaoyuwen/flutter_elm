@@ -3,6 +3,19 @@ import '../model/city.dart';
 
 class Api {
   static final String _host = 'http://169.254.50.16:8001';
+
+  static getGuessCity() async {
+    City city;
+    var uri = Uri.parse('$_host/v1/cities?type=guess');
+    try {
+      var data = await HttpUtils.httpGetJson(uri);
+      city = new City.fromJson(data);
+    } catch (e) {
+      print('getHotCites error: $e');
+    }
+    return city;
+  }
+
   static getHotCities() async {
     var cities = const [];
     var uri = Uri.parse('$_host/v1/cities?type=hot');

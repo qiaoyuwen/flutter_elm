@@ -40,6 +40,7 @@ class HomeState extends State<Home> {
   List<City> _hotCities = [];
   Map<String, List<City>> _citiesGroup = new Map();
   List<String> _citiesGroupKeys = [];
+  City _guessCity;
 
   @override
   void initState() {
@@ -50,11 +51,18 @@ class HomeState extends State<Home> {
         _hotCities = cities;
       });
     });
+
     Api.getCitiesGroup().then((Map<String, List<City>> citiesGroup) {
       setState(() {
         _citiesGroupKeys = citiesGroup.keys.toList();
         _citiesGroupKeys.sort((s1, s2) => s1.compareTo(s2));
         _citiesGroup = citiesGroup;
+      });
+    });
+
+    Api.getGuessCity().then((City city) {
+      setState(() {
+        _guessCity = city;
       });
     });
   }
@@ -153,6 +161,10 @@ class HomeState extends State<Home> {
             child: _buildRowContainer(
               new Row(
                 children: <Widget>[
+                  new Text(
+                    _guessCity == null ? '' : _guessCity.name,
+                    style: _hotTextStyle,
+                  ),
                   new Expanded(
                     child: new Align(
                       alignment: Alignment.centerRight,
