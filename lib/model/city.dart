@@ -18,7 +18,7 @@ class City {
   String abbr;
   String areaCode;
   bool isMap;
-  double longitude;
-  double latitude;
+  num longitude;
+  num latitude;
   int sort;
 }
