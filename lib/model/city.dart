@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class City {
   City.fromJson(Map<String, dynamic> json)
       : id = json['id'],

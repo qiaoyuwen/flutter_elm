@@ -1,8 +1,9 @@
 import 'http.dart';
 import '../model/city.dart';
+import '../model/place.dart';
 
 class Api {
-  static final String _host = 'http://169.254.30.27:8001';
+  static final String _host = 'http://169.254.33.114:8001';
 
   static getGuessCity() async {
     City city;
@@ -56,5 +57,21 @@ class Api {
       print('getCityById error: $e');
     }
     return city;
+  }
+
+  static searchPlace(int cityId, String query) async {
+    List<Place> places = [];
+    try {
+      var uri = Uri.parse('$_host/v1/pois?type=search&city_id=$cityId&keyword=$query');
+      var data = await HttpUtils.httpGetJson(uri);
+      if (data is List) {
+        places = data.map((item) {
+          return new Place.fromJson(item);
+        }).toList();
+      }
+    } catch (e) {
+      print('searchPlace error: $e');
+    }
+    return places;
   }
 }
