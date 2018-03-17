@@ -2,7 +2,7 @@ import 'http.dart';
 import '../model/city.dart';
 
 class Api {
-  static final String _host = 'http://169.254.44.137:8001';
+  static final String _host = 'http://169.254.30.27:8001';
 
   static getGuessCity() async {
     City city;
@@ -44,5 +44,17 @@ class Api {
       print('getCitesGroup error: $e');
     }
     return citiesGroup;
+  }
+
+  static getCityById(int id) async {
+    City city;
+    try {
+      var uri = Uri.parse('$_host/v1/cities/${id.toString()}');
+      var data = await HttpUtils.httpGetJson(uri);
+      city = new City.fromJson(data);
+    } catch (e) {
+      print('getCityById error: $e');
+    }
+    return city;
   }
 }

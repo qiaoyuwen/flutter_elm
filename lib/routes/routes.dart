@@ -12,12 +12,9 @@ class Routes {
         return new Login();
       },
     ));
-    router.define('/city/:id/:name', handler: new Handler(
+    router.define('/city/:id', handler: new Handler(
       handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-        return new City(
-          int.parse(params['id'][0]),
-          params['name'][0],
-        );
+        return new CityPage(int.parse(params['id'][0]));
       },
     ));
   }

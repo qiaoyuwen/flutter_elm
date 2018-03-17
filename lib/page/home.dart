@@ -73,7 +73,7 @@ class HomeState extends State<Home> {
   }
 
   _goCity(BuildContext context, City city) {
-    Routes.router.navigateTo(context, '/city/${city.id.toString()}/${city.name}');
+    Routes.router.navigateTo(context, '/city/${city.id.toString()}');
   }
 
   @override
