@@ -45,5 +45,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSLocationAlwaysUsageDescription</key>
+    <string>本应用需要您的同意,才能始终访问位置</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>本应用需要您的同意,才能访问位置</string>
 </dict>
 </plist>

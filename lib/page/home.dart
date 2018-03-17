@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../style/style.dart';
 import '../utils/api.dart';
 import '../model/city.dart';
+import '../routes/routes.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -68,7 +69,11 @@ class HomeState extends State<Home> {
   }
 
   _goLogin(BuildContext context) {
-    Navigator.of(context).pushNamed("/login");
+    Routes.router.navigateTo(context, '/login');
+  }
+
+  _goCity(BuildContext context, City city) {
+    Routes.router.navigateTo(context, '/city/${city.id.toString()}/${city.name}');
   }
 
   @override
@@ -178,7 +183,11 @@ class HomeState extends State<Home> {
                 ],
               ),
             ),
-            onTap: () => this._goLogin(context),
+            onTap: () {
+              if (_guessCity != null) {
+                this._goCity(context, _guessCity);
+              }
+            },
           ),
         ],
       ),
@@ -217,7 +226,7 @@ class HomeState extends State<Home> {
       }
       lastRow.children.add(
         new Expanded(
-          child: _buildCityBtn(i, _hotCities[i].name, true),
+          child: _buildCityBtn(i, _hotCities[i], true),
         ),
       );
       if (i == _hotCities.length - 1 && lastRow.children.length < 4) {
@@ -232,7 +241,7 @@ class HomeState extends State<Home> {
     return hotCityColumn;
   }
 
-  Widget _buildCityBtn(int index, String text, isHot) {
+  Widget _buildCityBtn(int index, City city, isHot) {
     return new GestureDetector(
       child: new Container(
         height: _lineHeight,
@@ -243,14 +252,14 @@ class HomeState extends State<Home> {
           padding: _btnPadding,
           alignment: Alignment.center,
           child: new Text(
-            text,
+            city.name,
             style: isHot ? _hotTextStyle : _textStyle,
             overflow: TextOverflow.ellipsis,
             softWrap: false,
           ),
         ),
       ),
-      onTap: () => this._goLogin(context),
+      onTap: () => this._goCity(context, city),
     );
   }
 
@@ -287,7 +296,7 @@ class HomeState extends State<Home> {
       }
       lastRow.children.add(
         new Expanded(
-          child: _buildCityBtn(i, cities[i].name, false),
+          child: _buildCityBtn(i, cities[i], false),
         ),
       );
       if (i == cities.length - 1 && lastRow.children.length < 4) {
