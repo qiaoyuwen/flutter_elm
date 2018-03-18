@@ -11,4 +11,12 @@ class Place {
   String geohash;
   num longitude;
   num latitude;
+
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'address': address,
+    'geohash': geohash,
+    'longitude': longitude,
+    'latitude': latitude,
+  };
 }

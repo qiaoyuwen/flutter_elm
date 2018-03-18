@@ -3,6 +3,7 @@ import '../style/style.dart';
 import '../utils/api.dart';
 import '../model/city.dart';
 import '../model/place.dart';
+import '../utils/local_storage.dart';
 
 class CityPage extends StatefulWidget {
   CityPage(int id)
@@ -15,7 +16,6 @@ class CityPage extends StatefulWidget {
 }
 
 class CityState extends State<CityPage> {
-  final _lineHeight = 60.0;
   final _gPadding = new EdgeInsets.symmetric(horizontal: Style.gPadding, vertical: 10.0);
   final _gMargin = new EdgeInsets.only(bottom: 10.0);
   final _textStyle = Style.textStyle;
@@ -40,6 +40,7 @@ class CityState extends State<CityPage> {
 
   City _city;
   List<Place> _searchPlaces = [];
+  List<Place> _historyPlaces = [];
   String _query = '';
 
   @override
@@ -49,6 +50,9 @@ class CityState extends State<CityPage> {
       setState(() {
         _city = city;
       });
+    });
+    LocalStorage.getPlaceHistory().then((List<Place> history) {
+      _historyPlaces = history.reversed.toList();
     });
   }
 
@@ -123,31 +127,84 @@ class CityState extends State<CityPage> {
   }
 
   Widget _buildResultLists() {
+    bool showHistory = _query.length == 0;
+    int itemCount = showHistory ? _historyPlaces.length : _searchPlaces.length;
+    if (showHistory && _historyPlaces.length > 0) {
+      itemCount += 1;
+    }
     return new ListView.builder(
-      itemCount: _searchPlaces.length,
+      itemCount: itemCount,
       itemBuilder: (context, i) {
-        var place = _searchPlaces[i];
-        return new Container(
-          padding: _gPadding,
-          decoration: new BoxDecoration(
-            color: Style.backgroundColor,
-            border: i == 0 ? _topBottomBorder : _bottomBorder,
-          ),
-          child: new Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              new Text(
-                place.name,
-                style: _textStyle,
+        Place place;
+        if ((showHistory && i < _historyPlaces.length) || !showHistory) {
+          place = showHistory ? _historyPlaces[i] : _searchPlaces[i];
+          return new GestureDetector(
+            child: new Container(
+              padding: _gPadding,
+              decoration: new BoxDecoration(
+                color: Style.backgroundColor,
+                border: i == 0 ? _topBottomBorder : _bottomBorder,
               ),
-              new Text(
-                place.address,
-                style: _tipTextStyle,
+              child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  new Text(
+                    place.name,
+                    style: _textStyle,
+                  ),
+                  new Text(
+                    place.address,
+                    style: _tipTextStyle,
+                  ),
+                ],
               ),
-            ],
-          ),
-        );
+            ),
+            onTap: () => _selectPlace(context, place),
+          );
+        } else {
+          return new GestureDetector(
+            child: new Container(
+              padding: _gPadding,
+              decoration: new BoxDecoration(
+                color: Style.backgroundColor,
+                border: _bottomBorder,
+              ),
+              child: new Center(
+                child: new Text(
+                  '清除所有',
+                  style: _textStyle,
+                ),
+              ),
+            ),
+            onTap: _clearHistory,
+          );
+        }
       },
     );
+  }
+
+  ///点击搜索结果进入下一页面时进行判断是否已经有一样的历史记录
+  ///如果没有则新增，如果有则不做重复储存，判断完成后进入下一页
+  _selectPlace(BuildContext context, Place place) async {
+    List<Place> history = await LocalStorage.getPlaceHistory();
+    bool find = false;
+    for(var item in history) {
+      if (item.geohash == place.geohash) {
+        find = true;
+        break;
+      }
+    }
+    if (!find) {
+      history.add(place);
+      LocalStorage.setPlaceHistory(history);
+    }
+    Navigator.of(context).pop();
+  }
+
+  _clearHistory() {
+    setState(() {
+      _historyPlaces = [];
+      LocalStorage.setPlaceHistory(_historyPlaces);
+    });
   }
 }

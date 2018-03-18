@@ -9,10 +9,13 @@ class LocalStorage {
     List<Place> results = [];
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      var data = JSON.decode(prefs.getString(PlaceHistoryKey)) as List;
-      results = data.map((item) {
-        return new Place.fromJson(item);
-      }).toList();
+      var json = prefs.getString(PlaceHistoryKey);
+      if (json != null) {
+        var data = JSON.decode(json) as List;
+        results = data.map((item) {
+          return new Place.fromJson(item);
+        }).toList();
+      }
     } catch (e) {
       print('getPlaceHistory error: $e');
     }

@@ -3,7 +3,7 @@ import '../model/city.dart';
 import '../model/place.dart';
 
 class Api {
-  static final String _host = 'http://169.254.33.114:8001';
+  static final String _host = 'http://169.254.247.17:8001';
 
   static getGuessCity() async {
     City city;
