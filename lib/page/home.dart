@@ -3,6 +3,7 @@ import '../style/style.dart';
 import '../utils/api.dart';
 import '../model/city.dart';
 import '../routes/routes.dart';
+import '../components/component_utils.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -68,44 +69,24 @@ class HomeState extends State<Home> {
     });
   }
 
-  _goLogin(BuildContext context) {
-    Routes.router.navigateTo(context, '/login');
-  }
-
   _goCity(BuildContext context, City city) {
     Routes.router.navigateTo(context, '/city/${city.id.toString()}');
   }
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData themeData = Theme.of(context);
     return new Scaffold(
-      appBar: _buildAppBar(themeData),
+      appBar: _buildAppBar(context),
       body: _buildBody(),
       backgroundColor: Style.emptyBackgroundColor,
     );
   }
 
-  Widget _buildAppBar(ThemeData themeData) {
-    return new AppBar(
-      title: new Text(
-        'elm.qyw',
-      ),
+  Widget _buildAppBar(BuildContext context) {
+    return ComponentUtils.buildAppBar(
+      context: context,
+      title: 'elm.qyw',
       centerTitle: false,
-      actions: <Widget>[
-        new GestureDetector(
-          onTap: () => this._goLogin(context),
-          child: new Container(
-            padding: ButtonTheme.of(context).padding,
-            child: new Center(
-              child: new Text(
-                '登录|注册',
-                style: themeData.primaryTextTheme.title,
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 

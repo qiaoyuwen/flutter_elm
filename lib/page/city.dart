@@ -4,6 +4,7 @@ import '../utils/api.dart';
 import '../model/city.dart';
 import '../model/place.dart';
 import '../utils/local_storage.dart';
+import '../routes/routes.dart';
 
 class CityPage extends StatefulWidget {
   CityPage(int id)
@@ -198,7 +199,7 @@ class CityState extends State<CityPage> {
       history.add(place);
       LocalStorage.setPlaceHistory(history);
     }
-    Navigator.of(context).pop();
+    Routes.router.navigateTo(context, '/msite/${place.geohash}');
   }
 
   _clearHistory() {

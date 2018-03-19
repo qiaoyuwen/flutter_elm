@@ -7,6 +7,7 @@ void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
   MyApp() {
+    //配置路由
     Routes.configureRoutes();
   }
   // This widget is the root of your application.
