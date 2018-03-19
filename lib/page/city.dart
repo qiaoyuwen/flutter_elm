@@ -69,6 +69,7 @@ class CityState extends State<CityPage> {
         title: new Text(
           _city != null ? _city.name : '',
         ),
+        centerTitle: true,
       ),
       body: new Column(
         children: <Widget>[

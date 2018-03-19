@@ -54,13 +54,13 @@ class HomeState extends State<Home> {
       });
     });
 
-    Api.getCitiesGroup().then((Map<String, List<City>> citiesGroup) {
+    /*Api.getCitiesGroup().then((Map<String, List<City>> citiesGroup) {
       setState(() {
         _citiesGroupKeys = citiesGroup.keys.toList();
         _citiesGroupKeys.sort((s1, s2) => s1.compareTo(s2));
         _citiesGroup = citiesGroup;
       });
-    });
+    });*/
 
     Api.getGuessCity().then((City city) {
       setState(() {

@@ -3,8 +3,8 @@ class Place {
       : name = json['name'],
         address = json['address'],
         geohash = json['geohash'],
-        longitude = json['longitude'],
-        latitude = json['latitude'];
+        longitude = num.parse(json['longitude'].toString()),
+        latitude = num.parse(json['latitude'].toString());
 
   String name;
   String address;

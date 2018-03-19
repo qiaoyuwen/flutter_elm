@@ -14,6 +14,7 @@ class ComponentUtils {
       leading: leading,
       title: new Text(
         title,
+        overflow: TextOverflow.ellipsis,
       ),
       centerTitle: centerTitle,
       automaticallyImplyLeading: false,

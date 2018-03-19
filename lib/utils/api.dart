@@ -1,6 +1,7 @@
 import 'http.dart';
 import '../model/city.dart';
 import '../model/place.dart';
+import '../model/food_type.dart';
 
 class Api {
   static final String _host = 'http://172.17.10.10:8001';
@@ -73,5 +74,33 @@ class Api {
       print('searchPlace error: $e');
     }
     return places;
+  }
+
+  static getPlace(String geohash) async {
+    Place place;
+    try {
+      var uri = Uri.parse('$_host/v2/pois/$geohash');
+      var data = await HttpUtils.httpGetJson(uri);
+      place = new Place.fromJson(data);
+    } catch (e) {
+      print('getPlace error: $e');
+    }
+    return place;
+  }
+
+  static getFoodTypes(String geohash) async {
+    List<FoodType> foodTypes = [];
+    try {
+      var uri = Uri.parse('$_host/v2/index_entry?geohash=$geohash&group_type=1&${Uri.encodeComponent('flags[]')}=F');
+      var data = await HttpUtils.httpGetJson(uri);
+      if (data is List) {
+        foodTypes = data.map((item) {
+          return new FoodType.fromJson(item);
+        }).toList();
+      }
+    } catch (e) {
+      print('getFoodTypes error: $e');
+    }
+    return foodTypes;
   }
 }
