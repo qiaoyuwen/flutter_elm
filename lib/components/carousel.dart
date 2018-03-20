@@ -122,8 +122,8 @@ class IndicatorState extends State<Indicator> {
     var indicators = <Widget>[];
     for (var i = 0; i < widget.count; ++i) {
       indicators.add(new Container(
-        width: 10.0,
-        height: 10.0,
+        width: 5.0,
+        height: 5.0,
         decoration: new BoxDecoration(
           borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
           color: _index == i ? Style.primaryColor : Style.borderColor,
@@ -131,7 +131,7 @@ class IndicatorState extends State<Indicator> {
       ));
     }
     return new SizedBox(
-      width: widget.count * 20.0,
+      width: widget.count * 15.0,
       height: 30.0,
       child: new Row(
         children: indicators,
