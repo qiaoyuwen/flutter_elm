@@ -167,6 +167,123 @@ class MSiteState extends State<MSite> {
         )
       );
     }
+    var starsRow = new Row(
+      children: <Widget>[],
+    );
+    for (var i = 0; i < 5; i++) {
+      starsRow.children.add(
+        new Icon(
+          Icons.star,
+          size: 13.0,
+          color: const Color(0xFFFF6000),
+        ),
+      );
+    }
+    var ratingRow = new Row(
+      children: <Widget>[
+        starsRow,
+        new Container(
+          margin: new EdgeInsets.symmetric(horizontal: 5.0),
+          child: new Text(
+            restaurant.rating.toString(),
+            style: new TextStyle(
+              color: const Color(0xFFFF6000),
+              fontSize: 13.0,
+            ),
+          ),
+        ),
+        new Text(
+          '月售${restaurant.recentOrderNum}单',
+          style: new TextStyle(
+            color: const Color(0xFF999999),
+            fontSize: 10.0,
+          ),
+        ),
+      ],
+    );
+    var ratingDescRow = new Row(
+      children: <Widget>[],
+    );
+    if (restaurant.deliveryMode != null) {
+      ratingDescRow.children.add(
+        new Container(
+          padding: new EdgeInsets.symmetric(horizontal: 2.0),
+          decoration: new BoxDecoration(
+            color: Style.primaryColor,
+            border: new Border.all(
+              color: Style.primaryColor,
+            ),
+            borderRadius: new BorderRadius.all(new Radius.circular(2.0)),
+          ),
+          child: new Text(
+            restaurant.deliveryMode.text,
+            style: new TextStyle(
+              color: Style.backgroundColor,
+              fontSize: 10.0,
+            ),
+          ),
+        ),
+      );
+    }
+    if (_zhunshi(restaurant)) {
+      ratingDescRow.children.add(
+        new Container(
+          margin: new EdgeInsets.only(left: 2.0),
+          padding: new EdgeInsets.symmetric(horizontal: 2.0),
+          decoration: new BoxDecoration(
+            color: Style.backgroundColor,
+            border: new Border.all(
+              color: Style.primaryColor,
+            ),
+            borderRadius: new BorderRadius.all(new Radius.circular(2.0)),
+          ),
+          child: new Text(
+            '准时达',
+            style: new TextStyle(
+              color: Style.primaryColor,
+              fontSize: 10.0,
+            ),
+          ),
+        ),
+      );
+    }
+    var distanceRow = new Row(
+      children: <Widget>[],
+    );
+    num distance = num.parse(restaurant.distance, (value) {
+      print(value);
+      return null;
+    });
+    if (distance != null) {
+      distanceRow.children.add(
+        new Text(
+          '${distance > 1000 ? '${(distance / 1000).toStringAsFixed(2)}km' : '${distance}m'}' + ' / ',
+          style: new TextStyle(
+            color: const Color(0xFF999999),
+            fontSize: 12.0,
+          ),
+        ),
+      );
+    } else {
+      distanceRow.children.add(
+        new Text(
+          '${restaurant.distance} / ',
+          style: new TextStyle(
+            color: const Color(0xFF999999),
+            fontSize: 12.0,
+          ),
+        ),
+      );
+    }
+    distanceRow.children.add(
+      new Text(
+        '${restaurant.orderLeadTime}',
+        style: new TextStyle(
+          color: Style.primaryColor,
+          fontSize: 12.0,
+        ),
+      ),
+    );
     return new Container(
       height: _shopHeight,
       padding: _shopPadding,
@@ -191,6 +308,7 @@ class MSiteState extends State<MSite> {
           ),
           new Expanded(
             child: new Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 new Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -199,14 +317,42 @@ class MSiteState extends State<MSite> {
                     supportsRow,
                   ],
                 ),
-                new Row(),
-                new Row(),
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    ratingRow,
+                    ratingDescRow
+                  ],
+                ),
+                new Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    new Text(
+                      '¥${restaurant.floatMinimumOrderAmount}起送 / ${restaurant.piecewiseAgentFee['tips']}',
+                      style: new TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    distanceRow,
+                  ],
+                ),
               ],
             ),
           ),
         ],
       ),
     );
+  }
+
+  bool _zhunshi(Restaurant r) {
+    if (r.supports != null && r.supports.length > 0) {
+      for (var s in r.supports) {
+        if (s.iconName == '准') {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   List<Widget> _buildFoodTypePages() {
