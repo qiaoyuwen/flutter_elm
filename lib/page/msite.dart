@@ -251,7 +251,6 @@ class MSiteState extends State<MSite> {
       children: <Widget>[],
     );
     num distance = num.parse(restaurant.distance, (value) {
-      print(value);
       return null;
     });
     if (distance != null) {
