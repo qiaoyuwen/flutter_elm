@@ -8,6 +8,7 @@ import '../utils/api.dart';
 import '../config/config.dart';
 import '../model/restaurant.dart';
 import '../config/config.dart';
+import '../components/rating_star.dart';
 
 class MSite extends StatefulWidget {
   MSite(num longitude, num latitude)
@@ -168,31 +169,9 @@ class MSiteState extends State<MSite> {
         )
       );
     }
-    var starsRow = new Row(
-      children: <Widget>[],
-    );
-    for (var i = 0; i < 5; i++) {
-      starsRow.children.add(
-        new Icon(
-          Icons.star,
-          size: 13.0,
-          color: const Color(0xFFFF6000),
-        ),
-      );
-    }
     var ratingRow = new Row(
       children: <Widget>[
-        starsRow,
-        new Container(
-          margin: new EdgeInsets.symmetric(horizontal: 5.0),
-          child: new Text(
-            restaurant.rating.toString(),
-            style: new TextStyle(
-              color: const Color(0xFFFF6000),
-              fontSize: 13.0,
-            ),
-          ),
-        ),
+        new RatingStar(restaurant.rating),
         new Text(
           '月售${restaurant.recentOrderNum}单',
           style: new TextStyle(
