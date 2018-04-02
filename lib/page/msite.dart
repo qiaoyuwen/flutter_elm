@@ -34,6 +34,9 @@ class MSiteState extends State<MSite> {
   Place _place;
   List<FoodType> _foodTypes = [];
   List<Restaurant> _restaurants = [];
+  bool _isLoading = false;
+  bool _loadingFinish = false;
+  int _offset = 0;
   final _foodTypePageSize = 8;
 
   @override
@@ -50,7 +53,10 @@ class MSiteState extends State<MSite> {
         _foodTypes = foodTypes;
       });
     });
-    Api.getRestaurants(widget.latitude, widget.longitude, 0, limit: _restaurantLimit).then((List<Restaurant> restaurants) {
+    Api.getRestaurants(widget.latitude, widget.longitude, _offset, limit: _restaurantLimit).then((List<Restaurant> restaurants) {
+      if (restaurants.length < _restaurantLimit) {
+        _loadingFinish = true;
+      }
       setState((){
         _restaurants = restaurants;
       });
@@ -118,6 +124,23 @@ class MSiteState extends State<MSite> {
             ),
           );
         } else {
+          if (!_loadingFinish && !_isLoading && i >= _restaurants.length - 2) {
+            print('loading more');
+            _isLoading = true;
+            _offset += _restaurantLimit;
+            Api.getRestaurants(widget.latitude, widget.longitude, _offset, limit: _restaurantLimit)
+                .then((List<Restaurant> restaurants) {
+              if (restaurants.length < _restaurantLimit) {
+                _loadingFinish = true;
+              }
+              setState((){
+                _restaurants.addAll(restaurants);
+              });
+            }).whenComplete((){
+              print('loading finish');
+              _isLoading = false;
+            });
+          }
           return _buildRestaurant(_restaurants[i - 2]);
         }
       },
