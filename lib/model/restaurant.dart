@@ -28,7 +28,7 @@ class Restaurant {
         distance = json['distance'],
         orderLeadTime = json['order_lead_time'],
         description = json['description'],
-        deliveryMode = new DeliveryMode.fromJson(json['delivery_mode']),
+        deliveryMode = json['delivery_mode'] == null ? null : new DeliveryMode.fromJson(json['delivery_mode']),
         activities = json['activities'],
         version = json['__v'];
 

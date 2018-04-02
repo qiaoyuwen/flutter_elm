@@ -28,6 +28,7 @@ class MSiteState extends State<MSite> {
   final _shopPadding = new EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0);
   final _shopHeight = 100.0;
   final _gMargin = new EdgeInsets.only(bottom: 10.0);
+  final _restaurantLimit = 10;
 
   Place _place;
   List<FoodType> _foodTypes = [];
@@ -48,7 +49,7 @@ class MSiteState extends State<MSite> {
         _foodTypes = foodTypes;
       });
     });
-    Api.getRestaurants(widget.latitude, widget.longitude, 0).then((List<Restaurant> restaurants) {
+    Api.getRestaurants(widget.latitude, widget.longitude, 0, limit: _restaurantLimit).then((List<Restaurant> restaurants) {
       setState((){
         _restaurants = restaurants;
       });

@@ -118,10 +118,11 @@ class Api {
     String orderBy = '',
     String deliveryMode = '',
     List<Support> supports = const [],
+    int limit = 20,
   }) async {
     List<Restaurant> restaurants = [];
     try {
-      String url = '$_host/shopping/restaurants?latitude=$latitude&longitude=$longitude&offset=$offset&limit=20';
+      String url = '$_host/shopping/restaurants?latitude=$latitude&longitude=$longitude&offset=$offset&limit=$limit';
       url += '&${Uri.encodeComponent('extras[]')}=activities';
       url += '&keyword=';
       url += '&restaurant_category_id=$restaurantCategoryId';
