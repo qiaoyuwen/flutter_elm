@@ -90,8 +90,12 @@ class MSiteState extends State<MSite> {
   }
 
   Widget _buildBody() {
+    var itemCount = 2 + _restaurants.length;
+    if (_loadingFinish) {
+      itemCount += 1;
+    }
     return new ListView.builder(
-      itemCount: 2 + _restaurants.length,
+      itemCount: itemCount,
       itemBuilder: (context, i) {
         if (i == 0) {
           return new Container(
@@ -121,6 +125,17 @@ class MSiteState extends State<MSite> {
                   style: Style.textStyle,
                 ),
               ],
+            ),
+          );
+        } else if (_loadingFinish && i == itemCount - 1) {
+          return new Container(
+            height: 50.0,
+            color: Style.backgroundColor,
+            child: new Center(
+              child: new Text(
+                '没有更多了',
+                style: Style.textStyle,
+              ),
             ),
           );
         } else {

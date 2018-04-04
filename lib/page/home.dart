@@ -4,6 +4,7 @@ import '../utils/api.dart';
 import '../model/city.dart';
 import '../routes/routes.dart';
 import '../components/component_utils.dart';
+import '../components/alphabet_bar.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -43,6 +44,7 @@ class HomeState extends State<Home> {
   Map<String, List<City>> _citiesGroup = new Map();
   List<String> _citiesGroupKeys = [];
   City _guessCity;
+  ListView _listView = null;
 
   @override
   void initState() {
@@ -54,13 +56,13 @@ class HomeState extends State<Home> {
       });
     });
 
-    /*Api.getCitiesGroup().then((Map<String, List<City>> citiesGroup) {
+    Api.getCitiesGroup().then((Map<String, List<City>> citiesGroup) {
       setState(() {
         _citiesGroupKeys = citiesGroup.keys.toList();
         _citiesGroupKeys.sort((s1, s2) => s1.compareTo(s2));
         _citiesGroup = citiesGroup;
       });
-    });*/
+    });
 
     Api.getGuessCity().then((City city) {
       setState(() {
@@ -91,7 +93,8 @@ class HomeState extends State<Home> {
   }
 
   Widget _buildBody() {
-    return new ListView.builder(
+    _listView = new ListView.builder(
+      controller: new ScrollController(),
       itemCount: 2 + _citiesGroupKeys.length,
       itemBuilder: (context, i) {
         if (i == 0) {
@@ -103,6 +106,26 @@ class HomeState extends State<Home> {
         }
       },
     );
+    return new Stack(
+      children: <Widget>[
+        _listView,
+        new Positioned(
+          top: 0.0,
+          right: 0.0,
+          bottom: 0.0,
+          child: new Center(
+            child: new AlphabetBar(
+              onTap: _goCityGroup,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  void _goCityGroup(String letter) {
+    var index = _citiesGroupKeys.indexOf(letter);
+    print(index);
   }
 
   Widget _buildBlockContainer(Widget child) {
