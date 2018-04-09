@@ -7,8 +7,8 @@ import '../model/place.dart';
 import '../utils/api.dart';
 import '../config/config.dart';
 import '../model/restaurant.dart';
-import '../config/config.dart';
 import '../components/rating_star.dart';
+import '../components/foot_bar.dart';
 
 class MSite extends StatefulWidget {
   MSite(num longitude, num latitude)
@@ -68,6 +68,7 @@ class MSiteState extends State<MSite> {
     return new Scaffold(
       appBar: _buildAppBar(context),
       body: _buildBody(),
+      bottomNavigationBar: new FootBar(currentIndex: 0,),
       backgroundColor: Style.emptyBackgroundColor,
     );
   }
