@@ -3,6 +3,7 @@ import 'package:fluro/fluro.dart';
 import '../page/login.dart';
 import '../page/city.dart';
 import '../page/msite.dart';
+import '../page/search.dart';
 
 class Routes {
   static final router = new Router();
@@ -22,6 +23,11 @@ class Routes {
       handlerFunc: (BuildContext context, Map<String, List<String>> params) {
         var splits = params['geohash'][0].split(',');
         return new MSite(num.parse(splits[0]), num.parse(splits[1]));
+      },
+    ));
+    router.define('/search/:geohash', handler: new Handler(
+      handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+        return new Search(params['geohash'][0]);
       },
     ));
   }
