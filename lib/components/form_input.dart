@@ -16,16 +16,19 @@ class FormInput extends StatefulWidget {
     String hintText = '',
     FormFieldSetter<String> onSaved,
     bool obscureText = false,
+    FormFieldValidator<String> validator,
   })
       : type = type,
         hintText = hintText,
         onSaved = onSaved,
-        obscureText = obscureText;
+        obscureText = obscureText,
+        validator = validator;
 
   final FormInputType type;
   final String hintText;
   final FormFieldSetter<String> onSaved;
   final bool obscureText;
+  final FormFieldValidator<String> validator;
 
   @override
   createState() => new FormInputState();
@@ -40,6 +43,7 @@ class FormInputState extends State<FormInput> {
   @override
   void initState() {
     super.initState();
+    print('init');
     setState(() {
       _obscureText = widget.obscureText;
     });
@@ -52,7 +56,7 @@ class FormInputState extends State<FormInput> {
     Api.getAuthCode().then((String code) {
       var splits = code.split(',');
       try {
-        if (splits.length > 1) {
+        if (splits.length > 1 && mounted) {
           setState(() => _authCodeImg = BASE64.decode(splits[1]));
         }
       } catch (e) {
@@ -119,6 +123,7 @@ class FormInputState extends State<FormInput> {
       ),
       obscureText: _obscureText,
       onSaved: widget.onSaved,
+      validator: widget.validator,
     );
   }
 }

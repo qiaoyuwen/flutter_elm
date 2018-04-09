@@ -3,8 +3,8 @@ import '../style/style.dart';
 
 class Button extends StatelessWidget {
   Button(
-      {double width = 0.0,
-      double height = 0.0,
+      {double width,
+      double height,
       String text = '',
       GestureTapCallback onTap})
       : width = width,
