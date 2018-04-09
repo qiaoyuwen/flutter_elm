@@ -146,4 +146,17 @@ class Api {
     }
     return restaurants;
   }
+
+  static getAuthCode() async {
+    var code = '';
+    try {
+      var uri =
+      Uri.parse('$_host/v1/captchas');
+      var data = await HttpUtils.httpPostJson(uri);
+      code = data['code'];
+    } catch (e) {
+      print('getAuthCode error: $e');
+    }
+    return code;
+  }
 }
