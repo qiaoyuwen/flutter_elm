@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../style/style.dart';
 import '../components/form_input.dart';
 import '../components/button.dart';
+import '../utils/api.dart';
+import '../utils/ui_utils.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -115,10 +117,20 @@ class LoginState extends State<Login> {
     );
   }
 
-  void _login() {
+  _login() async {
     var form = formKey.currentState;
     if (form.validate()) {
+      var data = await Api.accountLogin(_username, _password, _authCode);
+      if (data != null) {
+        if (data['user_id'] != null) {
 
+        } else {
+          showDialog(
+            context: context,
+            child: UiUtils.getSimpleAlert('提示', data['message']),
+          );
+        }
+      }
     }
   }
 }

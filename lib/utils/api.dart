@@ -159,4 +159,16 @@ class Api {
     }
     return code;
   }
+
+  static accountLogin(String username, String password, String authCode) async {
+    var data;
+    try {
+      var uri =
+      Uri.parse('$_host/v2/login?username=$username&password=$password&captcha_code=$authCode');
+      data = await HttpUtils.httpPostJson(uri);
+    } catch (e) {
+      print('accountLogin error: $e');
+    }
+    return data;
+  }
 }
