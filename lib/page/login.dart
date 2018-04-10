@@ -4,6 +4,8 @@ import '../components/form_input.dart';
 import '../components/button.dart';
 import '../utils/api.dart';
 import '../utils/ui_utils.dart';
+import '../model/user.dart';
+import '../utils/local_storage.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -101,7 +103,7 @@ class LoginState extends State<Login> {
                     children: <Widget>[
                       new GestureDetector(
                         child: new Text(
-                          '忘记密码？',
+                          '重置密码？',
                           style: new TextStyle(
                             color: Style.primaryColor,
                           ),
@@ -126,7 +128,17 @@ class LoginState extends State<Login> {
       var data = await Api.accountLogin(_username, _password, _authCode);
       if (data != null) {
         if (data['user_id'] != null) {
-          print(data);
+          try {
+            var user = new User.fromJson(data);
+            LocalStorage.setUser(user).then((result) {
+              Navigator.of(context).pop();
+            });
+          } catch(e) {
+            showDialog(
+              context: context,
+              child: UiUtils.getSimpleAlert('错误', '$e'),
+            );
+          }
         } else {
           showDialog(
             context: context,
