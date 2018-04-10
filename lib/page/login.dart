@@ -6,6 +6,7 @@ import '../utils/api.dart';
 import '../utils/ui_utils.dart';
 import '../model/user.dart';
 import '../utils/local_storage.dart';
+import '../components/head_bar.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -28,14 +29,10 @@ class LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        leading: new IconButton(
-            icon: new Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }
-        ),
-        title: new Text('登录'),
+      appBar: new HeadBar(
+        title: '登录',
+        leadingType: HeadBarLeadingType.goBack,
+        showUser: false,
       ),
       body: new ListView(
         children: <Widget>[

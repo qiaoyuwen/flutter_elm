@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../style/style.dart';
 import '../components/foot_bar.dart';
 import '../components/button.dart';
+import '../components/head_bar.dart';
 
 class Search extends StatefulWidget {
   Search(String  geoHash)
@@ -29,14 +30,10 @@ class SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        leading: new IconButton(
-            icon: new Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }),
-        title: new Text('搜索周边'),
-        centerTitle: true,
+      appBar: new HeadBar(
+        title: '搜索周边',
+        leadingType: HeadBarLeadingType.goBack,
+        showUser: false,
       ),
       body: new Column(
         children: <Widget>[

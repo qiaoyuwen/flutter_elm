@@ -12,7 +12,7 @@ class LocalStorage {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       var json = prefs.getString(PlaceHistoryKey);
-      if (json != null) {
+      if (json != 'null') {
         var data = JSON.decode(json) as List;
         results = data.map((item) {
           return new Place.fromJson(item);
@@ -41,11 +41,11 @@ class LocalStorage {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       var json = prefs.getString(UserKey);
-      if (json != null) {
+      if (json != 'null') {
         user = new User.fromJson(JSON.decode(json));
       }
     } catch (e) {
-      print('getPlaceHistory error: $e');
+      print('getUser error: $e');
     }
     return user;
   }

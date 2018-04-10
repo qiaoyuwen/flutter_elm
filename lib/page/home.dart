@@ -3,8 +3,9 @@ import '../style/style.dart';
 import '../utils/api.dart';
 import '../model/city.dart';
 import '../routes/routes.dart';
-import '../components/component_utils.dart';
 import '../components/alphabet_bar.dart';
+import '../components/head_bar.dart';
+import '../utils/local_storage.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -44,7 +45,7 @@ class HomeState extends State<Home> {
   Map<String, List<City>> _citiesGroup = new Map();
   List<String> _citiesGroupKeys = [];
   City _guessCity;
-  ListView _listView = null;
+  ListView _listView;
 
   @override
   void initState() {
@@ -78,17 +79,12 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: _buildAppBar(context),
+      appBar: new HeadBar(
+        title: 'elm.qyw',
+        centerTitle: false,
+      ),
       body: _buildBody(),
       backgroundColor: Style.emptyBackgroundColor,
-    );
-  }
-
-  Widget _buildAppBar(BuildContext context) {
-    return ComponentUtils.buildAppBar(
-      context: context,
-      title: 'elm.qyw',
-      centerTitle: false,
     );
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../components/foot_bar.dart';
 import '../style/style.dart';
+import '../components/head_bar.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -11,14 +12,10 @@ class ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        leading: new IconButton(
-            icon: new Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }),
-        title: new Text('我的'),
-        centerTitle: true,
+      appBar: new HeadBar(
+        title: '我的',
+        leadingType: HeadBarLeadingType.goBack,
+        showUser: false,
       ),
       body: new Column(
         children: <Widget>[

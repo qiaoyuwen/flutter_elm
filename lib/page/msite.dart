@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../components/component_utils.dart';
 import '../style/style.dart';
 import '../components/carousel.dart';
 import '../model/food_type.dart';
@@ -9,6 +8,7 @@ import '../config/config.dart';
 import '../model/restaurant.dart';
 import '../components/rating_star.dart';
 import '../components/foot_bar.dart';
+import '../components/head_bar.dart';
 
 class MSite extends StatefulWidget {
   MSite(num longitude, num latitude)
@@ -66,28 +66,14 @@ class MSiteState extends State<MSite> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: _buildAppBar(context),
+      appBar: new HeadBar(
+        title: _place != null ? _place.name : '',
+        leadingType: HeadBarLeadingType.search,
+      ),
       body: _buildBody(),
       bottomNavigationBar: new FootBar(currentIndex: 0,),
       backgroundColor: Style.emptyBackgroundColor,
     );
-  }
-
-  Widget _buildAppBar(BuildContext context) {
-    return ComponentUtils.buildAppBar(
-      context: context,
-      title: _place != null ? _place.name : '',
-      centerTitle: true,
-      leading: new IconButton(
-        icon: new Icon(Icons.search),
-        color: Style.backgroundColor,
-        onPressed: _goSearch,
-      ),
-    );
-  }
-
-  _goSearch() {
-
   }
 
   Widget _buildBody() {

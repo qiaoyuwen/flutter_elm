@@ -5,6 +5,7 @@ import '../model/city.dart';
 import '../model/place.dart';
 import '../utils/local_storage.dart';
 import '../routes/routes.dart';
+import '../components/head_bar.dart';
 
 class CityPage extends StatefulWidget {
   CityPage(int id)
@@ -60,16 +61,10 @@ class CityState extends State<CityPage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      appBar: new AppBar(
-        leading: new IconButton(
-            icon: new Icon(Icons.arrow_back_ios),
-            onPressed: () {
-              Navigator.of(context).pop();
-            }),
-        title: new Text(
-          _city != null ? _city.name : '',
-        ),
-        centerTitle: true,
+      appBar: new HeadBar(
+        title: _city != null ? _city.name : '',
+        leadingType: HeadBarLeadingType.goBack,
+        showUser: false,
       ),
       body: new Column(
         children: <Widget>[
