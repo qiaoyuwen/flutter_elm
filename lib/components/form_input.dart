@@ -43,7 +43,6 @@ class FormInputState extends State<FormInput> {
   @override
   void initState() {
     super.initState();
-    print('init');
     setState(() {
       _obscureText = widget.obscureText;
     });

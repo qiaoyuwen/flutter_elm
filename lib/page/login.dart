@@ -3,8 +3,12 @@ import '../style/style.dart';
 import '../components/form_input.dart';
 import '../components/button.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
+  @override
+  createState() => new LoginState();
+}
 
+class LoginState extends State<Login> {
   final _gPadding = new EdgeInsets.symmetric(horizontal: Style.gPadding);
   final _gTopPadding = new EdgeInsets.only(top: 10.0);
   final _tipTextStyle = new TextStyle(
@@ -21,19 +25,20 @@ class Login extends StatelessWidget {
     return new Scaffold(
       appBar: new AppBar(
         leading: new IconButton(
-          icon: new Icon(Icons.arrow_back_ios),
-          onPressed: () {
-            Navigator.of(context).pop();
-          }
+            icon: new Icon(Icons.arrow_back_ios),
+            onPressed: () {
+              Navigator.of(context).pop();
+            }
         ),
         title: new Text('登录'),
       ),
-      body: new Column(
+      body: new ListView(
         children: <Widget>[
           new Container(
             margin: new EdgeInsets.only(top: 15.0),
             color: Style.backgroundColor,
             child: new Form(
+              key: formKey,
               child: new Column(
                 children: <Widget>[
                   new FormInput(
@@ -85,6 +90,22 @@ class Login extends StatelessWidget {
                     onTap: _login,
                   ),
                 ),
+                new Padding(
+                  padding: _gTopPadding,
+                  child: new Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      new GestureDetector(
+                        child: new Text(
+                          '忘记密码？',
+                          style: new TextStyle(
+                            color: Style.primaryColor,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           )
@@ -95,5 +116,9 @@ class Login extends StatelessWidget {
   }
 
   void _login() {
+    var form = formKey.currentState;
+    if (form.validate()) {
+
+    }
   }
 }
