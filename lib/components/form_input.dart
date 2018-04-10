@@ -12,6 +12,7 @@ enum FormInputType {
 
 class FormInput extends StatefulWidget {
   FormInput({
+    Key key,
     FormInputType type = FormInputType.input,
     String hintText = '',
     FormFieldSetter<String> onSaved,
@@ -22,7 +23,7 @@ class FormInput extends StatefulWidget {
         hintText = hintText,
         onSaved = onSaved,
         obscureText = obscureText,
-        validator = validator;
+        validator = validator, super(key: key);
 
   final FormInputType type;
   final String hintText;
@@ -46,22 +47,22 @@ class FormInputState extends State<FormInput> {
     setState(() {
       _obscureText = widget.obscureText;
     });
-    if (widget.type == FormInputType.authCode) {
-      loadAuthCodeImg();
-    }
+    loadAuthCodeImg();
   }
 
   void loadAuthCodeImg() {
-    Api.getAuthCode().then((String code) {
-      var splits = code.split(',');
-      try {
-        if (splits.length > 1 && mounted) {
-          setState(() => _authCodeImg = BASE64.decode(splits[1]));
+    if (widget.type == FormInputType.authCode) {
+      Api.getAuthCode().then((String code) {
+        var splits = code.split(',');
+        try {
+          if (splits.length > 1 && mounted) {
+            setState(() => _authCodeImg = BASE64.decode(splits[1]));
+          }
+        } catch (e) {
+          print('decode base64 auth code img error: $e');
         }
-      } catch (e) {
-        print('decode base64 auth code img error: $e');
-      }
-    });
+      });
+    }
   }
 
   @override

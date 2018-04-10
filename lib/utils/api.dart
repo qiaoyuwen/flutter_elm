@@ -12,7 +12,7 @@ class Api {
     City city;
     var uri = Uri.parse('$_host/v1/cities?type=guess');
     try {
-      var data = await HttpUtils.httpGetJson(uri);
+      var data = await HttpUtils.httpGet(uri);
       city = new City.fromJson(data);
     } catch (e) {
       print('getGuessCity error: $e');
@@ -24,7 +24,7 @@ class Api {
     var cities = const [];
     var uri = Uri.parse('$_host/v1/cities?type=hot');
     try {
-      var data = (await HttpUtils.httpGetJson(uri)) as List;
+      var data = (await HttpUtils.httpGet(uri)) as List;
       cities = data.map((item) {
         return new City.fromJson(item);
       }).toList();
@@ -38,7 +38,7 @@ class Api {
     var citiesGroup = new Map<String, List>();
     var uri = Uri.parse('$_host/v1/cities?type=group');
     try {
-      var data = (await HttpUtils.httpGetJson(uri)) as Map<String, List>;
+      var data = (await HttpUtils.httpGet(uri)) as Map<String, List>;
       for (String key in data.keys) {
         citiesGroup[key] = data[key].map((item) {
           return new City.fromJson(item);
@@ -54,7 +54,7 @@ class Api {
     City city;
     try {
       var uri = Uri.parse('$_host/v1/cities/${id.toString()}');
-      var data = await HttpUtils.httpGetJson(uri);
+      var data = await HttpUtils.httpGet(uri);
       city = new City.fromJson(data);
     } catch (e) {
       print('getCityById error: $e');
@@ -67,7 +67,7 @@ class Api {
     try {
       var uri = Uri
           .parse('$_host/v1/pois?type=search&city_id=$cityId&keyword=$query');
-      var data = await HttpUtils.httpGetJson(uri);
+      var data = await HttpUtils.httpGet(uri);
       if (data is List) {
         places = data.map((item) {
           return new Place.fromJson(item);
@@ -83,7 +83,7 @@ class Api {
     Place place;
     try {
       var uri = Uri.parse('$_host/v2/pois/$geohash');
-      var data = await HttpUtils.httpGetJson(uri);
+      var data = await HttpUtils.httpGet(uri);
       place = new Place.fromJson(data);
     } catch (e) {
       print('getPlace error: $e');
@@ -97,7 +97,7 @@ class Api {
       var uri =
           Uri.parse('$_host/v2/index_entry?geohash=$geohash&group_type=1&${Uri
           .encodeComponent('flags[]')}=F');
-      var data = await HttpUtils.httpGetJson(uri);
+      var data = await HttpUtils.httpGet(uri);
       if (data is List) {
         foodTypes = data.map((item) {
           return new FoodType.fromJson(item);
@@ -135,7 +135,7 @@ class Api {
       }
       url += '&${Uri.encodeComponent('delivery_mode[]')}=${deliveryMode + supportStr}';
       var uri = Uri.parse(url);
-      var data = await HttpUtils.httpGetJson(uri);
+      var data = await HttpUtils.httpGet(uri);
       if (data is List) {
         restaurants = data.map((item) {
           return new Restaurant.fromJson(item);
@@ -152,7 +152,7 @@ class Api {
     try {
       var uri =
       Uri.parse('$_host/v1/captchas');
-      var data = await HttpUtils.httpPostJson(uri);
+      var data = await HttpUtils.httpPost(uri);
       code = data['code'];
     } catch (e) {
       print('getAuthCode error: $e');
@@ -164,8 +164,15 @@ class Api {
     var data;
     try {
       var uri =
-      Uri.parse('$_host/v2/login?username=$username&password=$password&captcha_code=$authCode');
-      data = await HttpUtils.httpPostJson(uri);
+      Uri.parse('$_host/v2/login');
+      data = await HttpUtils.httpPostJson(
+        uri,
+        jsonBody: {
+          'username': username,
+          'password': password,
+          'captcha_code': authCode,
+        },
+      );
     } catch (e) {
       print('accountLogin error: $e');
     }

@@ -17,6 +17,7 @@ class LoginState extends State<Login> {
     color: Colors.red,
   );
   final formKey = new GlobalKey<FormState>();
+  final authCodeInputKey = new GlobalKey<FormInputState>();
 
   String _username;
   String _password;
@@ -56,6 +57,7 @@ class LoginState extends State<Login> {
                     validator: (val) => val.length > 0 ? null : '请输入密码',
                   ),
                   new FormInput(
+                    key: authCodeInputKey,
                     type: FormInputType.authCode,
                     hintText: '验证码',
                     onSaved: (val) => _authCode = val,
@@ -120,17 +122,23 @@ class LoginState extends State<Login> {
   _login() async {
     var form = formKey.currentState;
     if (form.validate()) {
+      form.save();
       var data = await Api.accountLogin(_username, _password, _authCode);
       if (data != null) {
         if (data['user_id'] != null) {
-
+          print(data);
         } else {
           showDialog(
             context: context,
             child: UiUtils.getSimpleAlert('提示', data['message']),
           );
+          _loadAuthCode();
         }
       }
     }
+  }
+
+  _loadAuthCode() {
+    authCodeInputKey.currentState.loadAuthCodeImg();
   }
 }
