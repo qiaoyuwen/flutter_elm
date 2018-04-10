@@ -3,6 +3,7 @@ import '../routes/routes.dart';
 import '../model/user.dart';
 import '../utils/local_storage.dart';
 import '../style/style.dart';
+import '../routes/routes.dart';
 
 enum HeadBarLeadingType {
   none,
@@ -82,6 +83,18 @@ class HeadBarState extends State<HeadBar> {
             ),
           ),
         );
+      } else {
+        actions.add(
+          new Padding(
+            padding: ButtonTheme.of(context).padding,
+            child: new GestureDetector(
+              child: new Icon(
+                Icons.person,
+              ),
+              onTap: _goProfile,
+            ),
+          )
+        );
       }
     }
 
@@ -102,6 +115,10 @@ class HeadBarState extends State<HeadBar> {
   }
 
   _goSearch() {
+    Routes.router.navigateTo(context, '/search');
+  }
 
+  _goProfile() {
+    Routes.router.navigateTo(context, '/profile');
   }
 }
