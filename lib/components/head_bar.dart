@@ -17,16 +17,19 @@ class HeadBar extends StatefulWidget implements PreferredSizeWidget {
     String title: '',
     bool centerTitle: true,
     bool showUser: true,
+    GestureTapCallback titleOnTap,
   })
       : leadingType = leadingType,
         title = title,
         centerTitle = centerTitle,
         showUser = showUser,
-        preferredSize = new Size.fromHeight(kToolbarHeight);
+        preferredSize = new Size.fromHeight(kToolbarHeight),
+        titleOnTap=titleOnTap;
   final String title;
   final bool centerTitle;
   final HeadBarLeadingType leadingType;
   final bool showUser;
+  final GestureTapCallback titleOnTap;
 
   @override
   createState() => new HeadBarState();
@@ -73,7 +76,9 @@ class HeadBarState extends State<HeadBar> {
           new GestureDetector(
             onTap: () => _goLogin(context),
             child: new Container(
-              padding: ButtonTheme.of(context).padding,
+              padding: ButtonTheme
+                  .of(context)
+                  .padding,
               child: new Center(
                 child: new Text(
                   '登录|注册',
@@ -85,24 +90,29 @@ class HeadBarState extends State<HeadBar> {
         );
       } else {
         actions.add(
-          new Padding(
-            padding: ButtonTheme.of(context).padding,
-            child: new GestureDetector(
-              child: new Icon(
-                Icons.person,
+            new Padding(
+              padding: ButtonTheme
+                  .of(context)
+                  .padding,
+              child: new GestureDetector(
+                child: new Icon(
+                  Icons.person,
+                ),
+                onTap: _goProfile,
               ),
-              onTap: _goProfile,
-            ),
-          )
+            )
         );
       }
     }
 
     return new AppBar(
       leading: leading,
-      title: new Text(
-        widget.title,
-        overflow: TextOverflow.ellipsis,
+      title: new GestureDetector(
+        child: new Text(
+          widget.title,
+          overflow: TextOverflow.ellipsis,
+        ),
+        onTap: widget.titleOnTap,
       ),
       centerTitle: widget.centerTitle,
       automaticallyImplyLeading: false,

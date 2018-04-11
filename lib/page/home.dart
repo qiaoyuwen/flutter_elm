@@ -5,7 +5,6 @@ import '../model/city.dart';
 import '../routes/routes.dart';
 import '../components/alphabet_bar.dart';
 import '../components/head_bar.dart';
-import '../utils/local_storage.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -82,6 +81,7 @@ class HomeState extends State<Home> {
       appBar: new HeadBar(
         title: 'elm.qyw',
         centerTitle: false,
+        showUser: false,
       ),
       body: _buildBody(),
       backgroundColor: Style.emptyBackgroundColor,

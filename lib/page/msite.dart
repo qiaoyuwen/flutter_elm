@@ -9,6 +9,7 @@ import '../model/restaurant.dart';
 import '../components/rating_star.dart';
 import '../components/foot_bar.dart';
 import '../components/head_bar.dart';
+import '../routes/routes.dart';
 
 class MSite extends StatefulWidget {
   MSite(num longitude, num latitude)
@@ -69,11 +70,16 @@ class MSiteState extends State<MSite> {
       appBar: new HeadBar(
         title: _place != null ? _place.name : '',
         leadingType: HeadBarLeadingType.search,
+        titleOnTap: _goHome,
       ),
       body: _buildBody(),
       bottomNavigationBar: new FootBar(currentIndex: 0,),
       backgroundColor: Style.emptyBackgroundColor,
     );
+  }
+
+  _goHome() {
+    Routes.router.navigateTo(context, '/home');
   }
 
   Widget _buildBody() {
