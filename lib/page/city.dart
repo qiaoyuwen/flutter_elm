@@ -48,14 +48,20 @@ class CityState extends State<CityPage> {
   @override
   void initState() {
     super.initState();
-    Api.getCityById(widget.id).then((City city) {
-      setState(() {
-        _city = city;
-      });
+    getCity();
+    getPlaceHistory();
+  }
+
+  getCity() async {
+    City city = await Api.getCityById(widget.id);
+    setState(() {
+      _city = city;
     });
-    LocalStorage.getPlaceHistory().then((List<Place> history) {
-      _historyPlaces = history.reversed.toList();
-    });
+  }
+
+  getPlaceHistory() async {
+    List<Place> history = await LocalStorage.getPlaceHistory();
+    _historyPlaces = history.reversed.toList();
   }
 
   @override

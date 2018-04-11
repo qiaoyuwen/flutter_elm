@@ -15,11 +15,13 @@ class MSite extends StatefulWidget {
   MSite(num longitude, num latitude)
       : longitude = longitude,
         latitude = latitude,
+        geoHash = '$longitude,$latitude',
         assert(longitude != null),
         assert(latitude != null);
 
   final num longitude;
   final num latitude;
+  final String geoHash;
 
   @override
   createState() => new MSiteState();
@@ -43,25 +45,37 @@ class MSiteState extends State<MSite> {
   @override
   void initState() {
     super.initState();
-    String geohash = '${widget.longitude.toString()},${widget.latitude.toString()}';
-    Api.getPlace(geohash).then((Place place) {
-      setState((){
-        _place = place;
-      });
+    getPlace();
+    getFoodTypes();
+    getRestaurants();
+  }
+
+  getPlace() async {
+    Place place = await Api.getPlace(widget.geoHash);
+    setState((){
+      _place = place;
     });
-    Api.getFoodTypes(geohash).then((List<FoodType> foodTypes){
-      setState((){
-        _foodTypes = foodTypes;
-      });
+  }
+
+  getFoodTypes() async {
+    List<FoodType> foodTypes = await Api.getFoodTypes(widget.geoHash);
+    setState((){
+      _foodTypes = foodTypes;
     });
-    Api.getRestaurants(widget.latitude, widget.longitude, _offset, limit: _restaurantLimit).then((List<Restaurant> restaurants) {
-      if (restaurants.length < _restaurantLimit) {
-        _loadingFinish = true;
-      }
-      setState((){
-        _restaurants = restaurants;
-      });
+  }
+
+  getRestaurants() async {
+    print('loading restaurants');
+    _isLoading = true;
+    List<Restaurant> restaurants = await Api.getRestaurants(widget.latitude, widget.longitude, _offset, limit: _restaurantLimit);
+    if (restaurants.length < _restaurantLimit) {
+      _loadingFinish = true;
+    }
+    setState((){
+      _restaurants.addAll(restaurants);
     });
+    print('loading finish');
+    _isLoading = false;
   }
 
   @override
@@ -133,21 +147,8 @@ class MSiteState extends State<MSite> {
           );
         } else {
           if (!_loadingFinish && !_isLoading && i >= _restaurants.length - 2) {
-            print('loading more');
-            _isLoading = true;
             _offset += _restaurantLimit;
-            Api.getRestaurants(widget.latitude, widget.longitude, _offset, limit: _restaurantLimit)
-                .then((List<Restaurant> restaurants) {
-              if (restaurants.length < _restaurantLimit) {
-                _loadingFinish = true;
-              }
-              setState((){
-                _restaurants.addAll(restaurants);
-              });
-            }).whenComplete((){
-              print('loading finish');
-              _isLoading = false;
-            });
+            getRestaurants();
           }
           return _buildRestaurant(_restaurants[i - 2]);
         }

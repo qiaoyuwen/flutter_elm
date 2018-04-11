@@ -65,13 +65,9 @@ class HomeState extends State<Home> {
   getCitiesGroup() async {
     Map<String, List<City>> citiesGroup = await Api.getCitiesGroup();
     setState(() {
-      try {
-        _citiesGroupKeys = citiesGroup.keys.toList();
-        _citiesGroupKeys.sort((s1, s2) => s1.compareTo(s2));
-        _citiesGroup = citiesGroup;
-      } catch (e) {
-        print('$e');
-      }
+      _citiesGroupKeys = citiesGroup.keys.toList();
+      _citiesGroupKeys.sort((s1, s2) => s1.compareTo(s2));
+      _citiesGroup = citiesGroup;
     });
   }
 

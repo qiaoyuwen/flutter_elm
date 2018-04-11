@@ -45,8 +45,8 @@ class HttpUtils {
         _cookies.clear();
         _cookies.addAll(response.cookies);
       }
-      var json = await response.transform(UTF8.decoder).join();
-      var data = JSON.decode(json);
+      var jsonStr = await response.transform(utf8.decoder).join();
+      var data = json.decode(jsonStr);
       return data;
     } else {
       return null;

@@ -7,7 +7,7 @@ class Restaurant {
         name = json['name'],
         longitude = json['longitude'],
         latitude = json['latitude'],
-        location = json['location'],
+        location = (json['location'] as List).map((item) => item as num).toList(),
         address = json['address'],
         phone = json['phone'],
         category = json['category'],
@@ -18,7 +18,7 @@ class Restaurant {
         rating = json['rating'],
         promotionInfo = json['promotion_info'],
         piecewiseAgentFee = json['piecewise_agent_fee'],
-        openingHours = json['opening_hours'],
+        openingHours = (json['opening_hours'] as List).map((item) => item as String).toList(),
         license = json['license'],
         isNew = json['is_new'],
         isPremium = json['is_premium'],
@@ -46,9 +46,9 @@ class Restaurant {
   int ratingCount;
   num rating;
   String promotionInfo;
-  Map<String, String> piecewiseAgentFee;
+  Map<String, dynamic> piecewiseAgentFee;
   List<String> openingHours;
-  Map<String, String> license;
+  Map<String, dynamic> license;
   bool isNew;
   bool isPremium;
   String imagePath;

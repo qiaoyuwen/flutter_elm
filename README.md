@@ -6,3 +6,7 @@ A new Flutter project.
 
 For help getting started with Flutter, view our online
 [documentation](http://flutter.io/).
+
+## Current Flutter Version
+
+0.2.10
