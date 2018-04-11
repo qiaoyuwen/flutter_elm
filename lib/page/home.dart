@@ -5,6 +5,7 @@ import '../model/city.dart';
 import '../routes/routes.dart';
 import '../components/alphabet_bar.dart';
 import '../components/head_bar.dart';
+import '../utils/local_storage.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -52,6 +53,7 @@ class HomeState extends State<Home> {
     getHotCities();
     getCitiesGroup();
     getGuessCity();
+    //LocalStorage.setUser(null);
   }
 
   getHotCities() async {

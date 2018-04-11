@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import '../routes/routes.dart';
 import '../model/user.dart';
-import '../utils/local_storage.dart';
 import '../style/style.dart';
-import '../routes/routes.dart';
+import '../store/store.dart';
 
 enum HeadBarLeadingType {
   none,
@@ -44,14 +43,7 @@ class HeadBarState extends State<HeadBar> {
   @override
   void initState() {
     super.initState();
-    getUser();
-  }
-
-  getUser() async {
-    User user = await LocalStorage.getUser();
-    setState(() {
-      _user = user;
-    });
+    _user = store.state.user;
   }
 
   @override

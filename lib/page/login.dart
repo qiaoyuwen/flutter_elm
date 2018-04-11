@@ -3,10 +3,12 @@ import '../style/style.dart';
 import '../components/form_input.dart';
 import '../components/button.dart';
 import '../utils/api.dart';
-import '../utils/ui_utils.dart';
 import '../model/user.dart';
 import '../utils/local_storage.dart';
 import '../components/head_bar.dart';
+import '../components/custom_dialog.dart';
+import '../store/store.dart';
+import '../store/app_action.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -128,17 +130,24 @@ class LoginState extends State<Login> {
           try {
             var user = new User.fromJson(data);
             await LocalStorage.setUser(user);
+            store.dispatch(new LoginAction(user));
             Navigator.of(context).pop();
           } catch(e) {
             showDialog(
               context: context,
-              child: UiUtils.getSimpleAlert('错误', '$e'),
+              builder: (context) => new CustomDialog(
+                title: '错误',
+                content: '$e',
+              ),
             );
           }
         } else {
           showDialog(
             context: context,
-            child: UiUtils.getSimpleAlert('提示', data['message']),
+            builder: (context) => new CustomDialog(
+              title: '提示',
+              content: data['message'],
+            ),
           );
           _loadAuthCode();
         }
