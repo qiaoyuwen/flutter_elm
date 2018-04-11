@@ -49,25 +49,36 @@ class HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    Api.getHotCities().then((List<City> cities) {
-      cities.sort((c1, c2) => c1.sort - c2.sort);
-      setState(() {
-        _hotCities = cities;
-      });
-    });
+    getHotCities();
+    getCitiesGroup();
+    getGuessCity();
+  }
 
-    Api.getCitiesGroup().then((Map<String, List<City>> citiesGroup) {
-      setState(() {
+  getHotCities() async {
+    List<City> cities = await Api.getHotCities();
+    cities.sort((c1, c2) => c1.sort - c2.sort);
+    setState(() {
+      _hotCities = cities;
+    });
+  }
+
+  getCitiesGroup() async {
+    Map<String, List<City>> citiesGroup = await Api.getCitiesGroup();
+    setState(() {
+      try {
         _citiesGroupKeys = citiesGroup.keys.toList();
         _citiesGroupKeys.sort((s1, s2) => s1.compareTo(s2));
         _citiesGroup = citiesGroup;
-      });
+      } catch (e) {
+        print('$e');
+      }
     });
+  }
 
-    Api.getGuessCity().then((City city) {
-      setState(() {
-        _guessCity = city;
-      });
+  getGuessCity() async {
+    City city = await Api.getGuessCity();
+    setState(() {
+      _guessCity = city;
     });
   }
 

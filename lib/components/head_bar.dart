@@ -44,10 +44,13 @@ class HeadBarState extends State<HeadBar> {
   @override
   void initState() {
     super.initState();
-    LocalStorage.getUser().then((User user) {
-      setState(() {
-        _user = user;
-      });
+    getUser();
+  }
+
+  getUser() async {
+    User user = await LocalStorage.getUser();
+    setState(() {
+      _user = user;
     });
   }
 

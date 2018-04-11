@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../style/style.dart';
 import '../routes/routes.dart';
+import '../store/store.dart';
 
 class FootBar extends StatelessWidget {
   FootBar({int currentIndex = 0}) : currentIndex = currentIndex;
@@ -44,13 +45,17 @@ class FootBar extends StatelessWidget {
 
   go(BuildContext context, int index) {
     if (index == currentIndex) return;
+    String geoHash = store.state.geoHash;
+    if (geoHash.isEmpty) {
+      geoHash = 'null';
+    }
     String path = '';
     switch(index) {
       case 0:
-        path = '/msite/0,0';
+        path = '/msite/$geoHash';
         break;
       case 1:
-        path = '/search/0,0';
+        path = '/search/$geoHash';
         break;
       case 2:
         path = '/order';
@@ -60,6 +65,7 @@ class FootBar extends StatelessWidget {
         break;
     }
     if (path.length > 0) {
+      print('go to: $path');
       Routes.router.navigateTo(context, path);
     }
   }

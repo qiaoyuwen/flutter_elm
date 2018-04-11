@@ -35,14 +35,17 @@ class Api {
   }
 
   static getCitiesGroup() async {
-    var citiesGroup = new Map<String, List>();
+    var citiesGroup = new Map<String, List<City>>();
     var uri = Uri.parse('$_host/v1/cities?type=group');
     try {
-      var data = (await HttpUtils.httpGet(uri)) as Map<String, List>;
+      var data = (await HttpUtils.httpGet(uri)) as Map<String, dynamic>;
       for (String key in data.keys) {
-        citiesGroup[key] = data[key].map((item) {
-          return new City.fromJson(item);
-        }).toList();
+        var group = data[key];
+        if (group is List) {
+          citiesGroup[key] = group.map((item) {
+            return new City.fromJson(item);
+          }).toList();
+        }
       }
     } catch (e) {
       print('getCitesGroup error: $e');

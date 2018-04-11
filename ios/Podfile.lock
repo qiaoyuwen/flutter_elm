@@ -7,19 +7,19 @@ PODS:
 
 DEPENDENCIES:
   - Flutter (from `/Users/touseikun/devtool/flutter/bin/cache/artifacts/engine/ios`)
-  - location (from `/Users/touseikun/.pub-cache/hosted/pub.dartlang.org/location-1.1.7/ios`)
+  - location (from `/Users/touseikun/.pub-cache/hosted/pub.dartlang.org/location-1.2.0/ios`)
   - shared_preferences (from `/Users/touseikun/.pub-cache/hosted/pub.dartlang.org/shared_preferences-0.3.3/ios`)
 
 EXTERNAL SOURCES:
   Flutter:
     :path: /Users/touseikun/devtool/flutter/bin/cache/artifacts/engine/ios
   location:
-    :path: /Users/touseikun/.pub-cache/hosted/pub.dartlang.org/location-1.1.7/ios
+    :path: /Users/touseikun/.pub-cache/hosted/pub.dartlang.org/location-1.2.0/ios
   shared_preferences:
     :path: /Users/touseikun/.pub-cache/hosted/pub.dartlang.org/shared_preferences-0.3.3/ios
 
 SPEC CHECKSUMS:
-  Flutter: d674e78c937094a75ac71dd77e921e840bea3dbf
+  Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
   location: 3a2eed4dd2fab25e7b7baf2a9efefe82b512d740
   shared_preferences: 1feebfa37bb57264736e16865e7ffae7fc99b523
 
