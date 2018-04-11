@@ -6,6 +6,8 @@ import '../model/place.dart';
 import '../utils/local_storage.dart';
 import '../routes/routes.dart';
 import '../components/head_bar.dart';
+import '../store/store.dart';
+import '../store/app_action.dart';
 
 class CityPage extends StatefulWidget {
   CityPage(int id)
@@ -84,15 +86,14 @@ class CityState extends State<CityPage> {
     );
   }
 
-  _searchPlace(String query) {
+  _searchPlace(String query) async {
     setState(() {
       _query = query;
     });
     if (query.length != 0) {
-      Api.searchPlace(_city.id, query).then((List<Place> places) {
-        setState(() {
-          _searchPlaces = places;
-        });
+      List<Place> places = await Api.searchPlace(_city.id, query);
+      setState(() {
+        _searchPlaces = places;
       });
     }
   }
@@ -201,6 +202,7 @@ class CityState extends State<CityPage> {
       history.add(place);
       LocalStorage.setPlaceHistory(history);
     }
+    store.dispatch(new UpdateGeoHashAction(place.geohash));
     Routes.router.navigateTo(context, '/msite/${place.geohash}');
   }
 

@@ -50,18 +50,17 @@ class FormInputState extends State<FormInput> {
     loadAuthCodeImg();
   }
 
-  void loadAuthCodeImg() {
+  void loadAuthCodeImg() async {
     if (widget.type == FormInputType.authCode) {
-      Api.getAuthCode().then((String code) {
-        var splits = code.split(',');
-        try {
-          if (splits.length > 1 && mounted) {
-            setState(() => _authCodeImg = BASE64.decode(splits[1]));
-          }
-        } catch (e) {
-          print('decode base64 auth code img error: $e');
+      String code = await Api.getAuthCode();
+      var splits = code.split(',');
+      try {
+        if (splits.length > 1 && mounted) {
+          setState(() => _authCodeImg = base64.decode(splits[1]));
         }
-      });
+      } catch (e) {
+        print('decode base64 auth code img error: $e');
+      }
     }
   }
 

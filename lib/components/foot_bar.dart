@@ -47,7 +47,7 @@ class FootBar extends StatelessWidget {
     if (index == currentIndex) return;
     String geoHash = store.state.geoHash;
     if (geoHash.isEmpty) {
-      geoHash = 'null';
+      geoHash = '0,0';
     }
     String path = '';
     switch(index) {

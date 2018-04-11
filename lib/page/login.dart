@@ -127,9 +127,8 @@ class LoginState extends State<Login> {
         if (data['user_id'] != null) {
           try {
             var user = new User.fromJson(data);
-            LocalStorage.setUser(user).then((result) {
-              Navigator.of(context).pop();
-            });
+            await LocalStorage.setUser(user);
+            Navigator.of(context).pop();
           } catch(e) {
             showDialog(
               context: context,
