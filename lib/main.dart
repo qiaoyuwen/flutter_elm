@@ -19,7 +19,6 @@ class MyApp extends StatelessWidget {
   }
 
   _getUser() async {
-    print('get user');
     User user = await LocalStorage.getUser();
     store.dispatch(new LoginAction(user));
   }

@@ -11,9 +11,9 @@ class LocalStorage {
     List<Place> results = [];
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      var json = prefs.getString(PlaceHistoryKey);
-      if (json != 'null') {
-        var data = JSON.decode(json) as List;
+      var jsonStr = prefs.getString(PlaceHistoryKey);
+      if (jsonStr != 'null') {
+        var data = json.decode(jsonStr) as List;
         results = data.map((item) {
           return new Place.fromJson(item);
         }).toList();
@@ -28,7 +28,7 @@ class LocalStorage {
     var result = true;
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString(PlaceHistoryKey, JSON.encode(places));
+      prefs.setString(PlaceHistoryKey, json.encode(places));
     } catch (e) {
       result = false;
       print('setPlaceHistory error: $e');
@@ -40,9 +40,9 @@ class LocalStorage {
     User user;
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      var json = prefs.getString(UserKey);
-      if (json != 'null') {
-        user = new User.fromJson(JSON.decode(json));
+      var jsonStr = prefs.getString(UserKey);
+      if (jsonStr != 'null') {
+        user = new User.fromJson(json.decode(jsonStr));
       }
     } catch (e) {
       print('getUser error: $e');
@@ -54,7 +54,7 @@ class LocalStorage {
     var result = true;
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString(UserKey, JSON.encode(user));
+      prefs.setString(UserKey, json.encode(user));
     } catch (e) {
       result = false;
       print('setUser error: $e');

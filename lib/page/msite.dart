@@ -173,9 +173,12 @@ class MSiteState extends State<MSite> {
       );
     }
     detailRow.children.add(
-      new Text(
-        restaurant.name,
-        style: Style.textStyle,
+      new Expanded(
+        child: new Text(
+          restaurant.name,
+          style: Style.textStyle,
+          overflow: TextOverflow.ellipsis,
+        ),
       )
     );
     var supportsRow = new Row(
@@ -324,7 +327,9 @@ class MSiteState extends State<MSite> {
                 new Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    detailRow,
+                    new Expanded(
+                      child: detailRow,
+                    ),
                     supportsRow,
                   ],
                 ),
