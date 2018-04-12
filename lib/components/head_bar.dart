@@ -17,18 +17,21 @@ class HeadBar extends StatefulWidget implements PreferredSizeWidget {
     bool centerTitle: true,
     bool showUser: true,
     GestureTapCallback titleOnTap,
+    PreferredSizeWidget bottom,
   })
       : leadingType = leadingType,
         title = title,
         centerTitle = centerTitle,
         showUser = showUser,
-        preferredSize = new Size.fromHeight(kToolbarHeight),
+        preferredSize = new Size.fromHeight(kToolbarHeight + (bottom?.preferredSize?.height ?? 0.0)),
+        bottom=bottom,
         titleOnTap=titleOnTap;
   final String title;
   final bool centerTitle;
   final HeadBarLeadingType leadingType;
   final bool showUser;
   final GestureTapCallback titleOnTap;
+  final PreferredSizeWidget bottom;
 
   @override
   createState() => new HeadBarState();
@@ -112,6 +115,7 @@ class HeadBarState extends State<HeadBar> {
       centerTitle: widget.centerTitle,
       automaticallyImplyLeading: false,
       actions: actions,
+      bottom: widget.bottom,
     );
   }
 
