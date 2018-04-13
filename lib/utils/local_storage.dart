@@ -6,6 +6,7 @@ import '../model/user.dart';
 class LocalStorage {
   static const String PlaceHistoryKey = 'PlaceHistoryKey';
   static const String UserKey = 'UserKey';
+  static const String SearchHistoryKey = 'SearchHistoryKey';
 
   static getPlaceHistory() async {
     List<Place> results = [];
@@ -58,6 +59,32 @@ class LocalStorage {
     } catch (e) {
       result = false;
       print('setUser error: $e');
+    }
+    return result;
+  }
+
+  static getSearchHistory() async {
+    List<String> history = [];
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      var jsonStr = prefs.getString(SearchHistoryKey);
+      if (jsonStr != null) {
+        (json.decode(jsonStr) as List).forEach((item) => history.add(item));
+      }
+    } catch (e) {
+      print('getSearchHistory error: $e');
+    }
+    return history;
+  }
+
+  static setSearchHistory(List<String> history) async {
+    var result = true;
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString(SearchHistoryKey, json.encode(history));
+    } catch (e) {
+      result = false;
+      print('setSearchHistory error: $e');
     }
     return result;
   }

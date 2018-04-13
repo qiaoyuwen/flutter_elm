@@ -125,18 +125,21 @@ class Api {
   }) async {
     List<Restaurant> restaurants = [];
     try {
-      String url = '$_host/shopping/restaurants?latitude=$latitude&longitude=$longitude&offset=$offset&limit=$limit';
+      String url =
+          '$_host/shopping/restaurants?latitude=$latitude&longitude=$longitude&offset=$offset&limit=$limit';
       url += '&${Uri.encodeComponent('extras[]')}=activities';
       url += '&keyword=';
       url += '&restaurant_category_id=$restaurantCategoryId';
-      url += '&${Uri.encodeComponent('restaurant_category_ids[]')}=$restaurantCategoryIds';
+      url += '&${Uri.encodeComponent(
+          'restaurant_category_ids[]')}=$restaurantCategoryIds';
       url += '&order_by=$orderBy';
 
       String supportStr = '';
       for (var support in supports) {
         supportStr += '&support_ids[]=${support.id}';
       }
-      url += '&${Uri.encodeComponent('delivery_mode[]')}=${deliveryMode + supportStr}';
+      url +=
+          '&${Uri.encodeComponent('delivery_mode[]')}=${deliveryMode + supportStr}';
       var uri = Uri.parse(url);
       var data = await HttpUtils.httpGet(uri);
       if (data is List) {
@@ -153,8 +156,7 @@ class Api {
   static getAuthCode() async {
     var code = '';
     try {
-      var uri =
-      Uri.parse('$_host/v1/captchas');
+      var uri = Uri.parse('$_host/v1/captchas');
       var data = await HttpUtils.httpPost(uri);
       code = data['code'];
     } catch (e) {
@@ -166,8 +168,7 @@ class Api {
   static accountLogin(String username, String password, String authCode) async {
     var data;
     try {
-      var uri =
-      Uri.parse('$_host/v2/login');
+      var uri = Uri.parse('$_host/v2/login');
       data = await HttpUtils.httpPostJson(
         uri,
         jsonBody: {
@@ -180,5 +181,20 @@ class Api {
       print('accountLogin error: $e');
     }
     return data;
+  }
+
+  static searchRestaurant(String geoHash, String keyword) async {
+    List<Restaurant> result = [];
+    try {
+      var uri = Uri.parse('$_host/v4/restaurants?${Uri.encodeComponent(
+          'extras[]')}=restaurant_activity&geohash=$geoHash&keyword=$keyword&type=search');
+      var data = await HttpUtils.httpGet(uri);
+      if (data is List) {
+        result = data.map((item) => new Restaurant.fromJson(item)).toList();
+      }
+    } catch (e) {
+      print('searchRestaurant error: $e');
+    }
+    return result;
   }
 }
