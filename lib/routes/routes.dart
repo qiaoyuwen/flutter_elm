@@ -7,6 +7,7 @@ import '../page/msite.dart';
 import '../page/search.dart';
 import '../page/order.dart';
 import '../page/profile.dart';
+import '../page/food.dart';
 
 class Routes {
   static final router = new Router();
@@ -46,6 +47,15 @@ class Routes {
     router.define('/profile', handler: new Handler(
       handlerFunc: (BuildContext context, Map<String, List<String>> params) {
         return new Profile();
+      },
+    ));
+    router.define('/food/:categoryId/:title/:geohash', handler: new Handler(
+      handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+        return new Food(
+          title: params['title'][0],
+          restaurantCategoryId: params['categoryId'][0],
+          geoHash: params['geohash'][0],
+        );
       },
     ));
   }

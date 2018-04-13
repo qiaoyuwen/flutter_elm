@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import '../style/style.dart';
 import '../components/carousel.dart';
 import '../model/food_type.dart';
@@ -29,7 +30,8 @@ class MSite extends StatefulWidget {
 
 class MSiteState extends State<MSite> {
   final _gPadding = new EdgeInsets.symmetric(horizontal: Style.gPadding);
-  final _shopPadding = new EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0);
+  final _shopPadding =
+      new EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0);
   final _shopHeight = 100.0;
   final _gMargin = new EdgeInsets.only(bottom: 10.0);
   final _restaurantLimit = 10;
@@ -52,14 +54,14 @@ class MSiteState extends State<MSite> {
 
   getPlace() async {
     Place place = await Api.getPlace(widget.geoHash);
-    setState((){
+    setState(() {
       _place = place;
     });
   }
 
   getFoodTypes() async {
     List<FoodType> foodTypes = await Api.getFoodTypes(widget.geoHash);
-    setState((){
+    setState(() {
       _foodTypes = foodTypes;
     });
   }
@@ -67,11 +69,13 @@ class MSiteState extends State<MSite> {
   getRestaurants() async {
     print('loading restaurants');
     _isLoading = true;
-    List<Restaurant> restaurants = await Api.getRestaurants(widget.latitude, widget.longitude, _offset, limit: _restaurantLimit);
+    List<Restaurant> restaurants = await Api.getRestaurants(
+        widget.latitude, widget.longitude, _offset,
+        limit: _restaurantLimit);
     if (restaurants.length < _restaurantLimit) {
       _loadingFinish = true;
     }
-    setState((){
+    setState(() {
       _restaurants.addAll(restaurants);
     });
     print('loading finish');
@@ -87,7 +91,9 @@ class MSiteState extends State<MSite> {
         titleOnTap: _goHome,
       ),
       body: _buildBody(),
-      bottomNavigationBar: new FootBar(currentIndex: 0,),
+      bottomNavigationBar: new FootBar(
+        currentIndex: 0,
+      ),
       backgroundColor: Style.emptyBackgroundColor,
     );
   }
@@ -172,37 +178,33 @@ class MSiteState extends State<MSite> {
         ),
       );
     }
-    detailRow.children.add(
-      new Expanded(
-        child: new Text(
-          restaurant.name,
-          style: Style.textStyle,
-          overflow: TextOverflow.ellipsis,
-        ),
-      )
-    );
+    detailRow.children.add(new Expanded(
+      child: new Text(
+        restaurant.name,
+        style: Style.textStyle,
+        overflow: TextOverflow.ellipsis,
+      ),
+    ));
     var supportsRow = new Row(
       children: <Widget>[],
     );
     for (var support in restaurant.supports) {
-      supportsRow.children.add(
-        new Container(
-          padding: const EdgeInsets.symmetric(horizontal: 2.0),
-          decoration: new BoxDecoration(
-            border: new Border.all(
-              color: Style.borderColor,
-              width: 0.5,
-            ),
+      supportsRow.children.add(new Container(
+        padding: const EdgeInsets.symmetric(horizontal: 2.0),
+        decoration: new BoxDecoration(
+          border: new Border.all(
+            color: Style.borderColor,
+            width: 0.5,
           ),
-          child: new Text(
-            support.iconName,
-            style: new TextStyle(
-              color: const Color(0xFF999999),
-              fontSize: 10.0,
-            ),
+        ),
+        child: new Text(
+          support.iconName,
+          style: new TextStyle(
+            color: const Color(0xFF999999),
+            fontSize: 10.0,
           ),
-        )
-      );
+        ),
+      ));
     }
     var ratingRow = new Row(
       children: <Widget>[
@@ -271,7 +273,10 @@ class MSiteState extends State<MSite> {
     if (distance != null) {
       distanceRow.children.add(
         new Text(
-          '${distance > 1000 ? '${(distance / 1000).toStringAsFixed(2)}km' : '${distance}m'}' + ' / ',
+          '${distance > 1000
+              ? '${(distance / 1000).toStringAsFixed(2)}km'
+              : '${distance}m'}' +
+              ' / ',
           style: new TextStyle(
             color: const Color(0xFF999999),
             fontSize: 12.0,
@@ -335,16 +340,14 @@ class MSiteState extends State<MSite> {
                 ),
                 new Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    ratingRow,
-                    ratingDescRow
-                  ],
+                  children: <Widget>[ratingRow, ratingDescRow],
                 ),
                 new Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     new Text(
-                      '¥${restaurant.floatMinimumOrderAmount}起送 / ${restaurant.piecewiseAgentFee['tips']}',
+                      '¥${restaurant.floatMinimumOrderAmount}起送 / ${restaurant
+                          .piecewiseAgentFee['tips']}',
                       style: new TextStyle(
                         fontSize: 12.0,
                       ),
@@ -399,8 +402,8 @@ class MSiteState extends State<MSite> {
         lastRow = container.child;
         columnChildren.add(container);
       }
-      lastRow.children.add(
-        new Expanded(
+      lastRow.children.add(new Expanded(
+        child: new GestureDetector(
           child: new Container(
             child: new Column(
               children: <Widget>[
@@ -416,9 +419,11 @@ class MSiteState extends State<MSite> {
               ],
             ),
           ),
-        )
-      );
-      if (i == foodTypes.length - 1 && lastRow.children.length != _foodTypePageSize / 2) {
+          onTap: () => _goFood(foodType),
+        ),
+      ));
+      if (i == foodTypes.length - 1 &&
+          lastRow.children.length != _foodTypePageSize / 2) {
         lastRow.children.add(
           new Expanded(
             flex: (_foodTypePageSize / 2 - lastRow.children.length).floor(),
@@ -430,5 +435,25 @@ class MSiteState extends State<MSite> {
     return new Column(
       children: columnChildren,
     );
+  }
+
+  void _goFood(FoodType foodType) {
+    Routes.router.navigateTo(
+        context,
+        '/food/${_getCategoryId(foodType.link)}/${foodType.title}/${widget
+            .geoHash}');
+  }
+
+  // 解码url地址，获取restaurant_category_id
+  String _getCategoryId(url) {
+    String params = url.split('=')[1];
+    String urlData =
+        Uri.decodeComponent(params.replaceFirst('&target_name', ''));
+    if (urlData.contains('restaurant_category_id')) {
+      var data = json.decode(urlData);
+      return data['restaurant_category_id']['id'].toString();
+    } else {
+      return '';
+    }
   }
 }
