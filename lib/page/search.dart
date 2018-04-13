@@ -9,7 +9,7 @@ import '../utils/api.dart';
 import '../config/config.dart';
 
 class Search extends StatefulWidget {
-  Search(String  geoHash)
+  Search(String geoHash)
       : geoHash = geoHash,
         assert(geoHash != null);
   final String geoHash;
@@ -19,7 +19,8 @@ class Search extends StatefulWidget {
 }
 
 class SearchState extends State<Search> {
-  final _gPadding = new EdgeInsets.symmetric(horizontal: Style.gPadding, vertical: 10.0);
+  final _gPadding =
+      new EdgeInsets.symmetric(horizontal: Style.gPadding, vertical: 10.0);
   final _gMargin = new EdgeInsets.only(bottom: 10.0);
   final _textStyle = Style.textStyle;
   final _topBottomBorder = new Border(
@@ -59,7 +60,8 @@ class SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    var itemCount = 2 + (_showHistory ? _history.length + 1 : _restaurants.length);
+    var itemCount =
+        2 + (_showHistory ? _history.length + 1 : (_restaurants.isEmpty ? 1 : _restaurants.length));
     return new Scaffold(
       appBar: new HeadBar(
         title: '搜索周边',
@@ -72,7 +74,7 @@ class SearchState extends State<Search> {
           if (i == 0) {
             return _buildSearchContainer();
           } else if (i == 1) {
-            if (_showHistory && _history.isEmpty) {
+            if ((_showHistory && _history.isEmpty) || _restaurants.isEmpty) {
               return new Container();
             } else {
               return new Container(
@@ -101,9 +103,7 @@ class SearchState extends State<Search> {
                       child: new Center(
                         child: new Text(
                           '清空搜索历史',
-                          style: new TextStyle(
-                              color: Style.primaryColor
-                          ),
+                          style: new TextStyle(color: Style.primaryColor),
                         ),
                       ),
                     ),
@@ -114,12 +114,24 @@ class SearchState extends State<Search> {
                 return _buildHistoryItem(index);
               }
             } else {
-              return _buildRestaurantItem(index);
+              if (_restaurants.isEmpty) {
+                return new Container(
+                  color: Style.backgroundColor,
+                  padding: _gPadding,
+                  child: new Center(
+                    child: new Text('很抱歉！无搜索结果'),
+                  ),
+                );
+              } else {
+                return _buildRestaurantItem(index);
+              }
             }
           }
         },
       ),
-      bottomNavigationBar: new FootBar(currentIndex: 1,),
+      bottomNavigationBar: new FootBar(
+        currentIndex: 1,
+      ),
       backgroundColor: Style.emptyBackgroundColor,
     );
   }
@@ -147,7 +159,10 @@ class SearchState extends State<Search> {
                 ),
               ),
               child: new TextField(
-                controller: new TextEditingController(text: _searchValue),
+                controller: new TextEditingController(text: _searchValue)
+                  ..selection = new TextSelection(
+                      baseOffset: _searchValue.length,
+                      extentOffset: _searchValue.length),
                 decoration: new InputDecoration(
                   hintText: '请输入商家或美食的名称',
                   hintStyle: _textStyle,
@@ -276,7 +291,9 @@ class SearchState extends State<Search> {
                   ],
                 ),
                 new Text('月售 ${restaurant.recentOrderNum} 单'),
-                new Text('${restaurant.floatMinimumOrderAmount} 元起送 / 距离 ${restaurant.distance}'),
+                new Text(
+                    '${restaurant.floatMinimumOrderAmount} 元起送 / 距离 ${restaurant
+                        .distance}'),
               ],
             ),
           ),
