@@ -2,17 +2,23 @@ import 'package:flutter/material.dart';
 import '../components/head_bar.dart';
 import '../style/style.dart';
 import '../components/drop_down.dart';
+import '../components/shop_list.dart';
 
 class Food extends StatefulWidget {
   Food({
     String title,
-    String geoHash,
+    num longitude,
+    num latitude,
     String restaurantCategoryId,
   })  : title = title,
-        geoHash = geoHash,
+        longitude = longitude,
+        latitude = latitude,
+        geoHash = '$longitude,$latitude',
         restaurantCategoryId = restaurantCategoryId;
 
   final String title;
+  final num longitude;
+  final num latitude;
   final String geoHash;
   final String restaurantCategoryId;
 
@@ -29,13 +35,13 @@ class FoodState extends State<Food> {
         leadingType: HeadBarLeadingType.goBack,
         showUser: false,
       ),
-      body: new ListView.builder(
-        itemCount: 1,
-        itemBuilder: (context, i) {
-          if (i == 0) {
-            return _buildSortContainer();
-          }
-        },
+      body: new Column(
+        children: <Widget>[
+          _buildSortContainer(),
+          new Expanded(
+            child: new ShopList(widget.longitude, widget.latitude, widget.restaurantCategoryId),
+          ),
+        ],
       ),
       backgroundColor: Style.emptyBackgroundColor,
     );

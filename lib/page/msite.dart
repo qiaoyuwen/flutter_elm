@@ -7,7 +7,7 @@ import '../model/place.dart';
 import '../utils/api.dart';
 import '../config/config.dart';
 import '../model/restaurant.dart';
-import '../utils/ui_utils.dart';
+import '../components/shop_item.dart';
 import '../components/foot_bar.dart';
 import '../components/head_bar.dart';
 import '../routes/routes.dart';
@@ -153,14 +153,10 @@ class MSiteState extends State<MSite> {
             _offset += _restaurantLimit;
             getRestaurants();
           }
-          return _buildRestaurant(_restaurants[i - 2]);
+          return new ShopItem(_restaurants[i - 2]);
         }
       },
     );
-  }
-
-  Widget _buildRestaurant(Restaurant restaurant) {
-    return UiUtils.buildRestaurant(restaurant);
   }
 
   List<Widget> _buildFoodTypePages() {

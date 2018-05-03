@@ -31,7 +31,7 @@ class Routes {
     router.define('/msite/:geohash', handler: new Handler(
       handlerFunc: (BuildContext context, Map<String, List<String>> params) {
         var splits = params['geohash'][0].split(',');
-        return new MSite(num.parse(splits[0]), num.parse(splits[1]));
+        return new MSite(num.tryParse(splits[0]), num.tryParse(splits[1]));
       },
     ));
     router.define('/search/:geohash', handler: new Handler(
@@ -51,10 +51,12 @@ class Routes {
     ));
     router.define('/food/:categoryId/:title/:geohash', handler: new Handler(
       handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+        var splits = params['geohash'][0].split(',');
         return new Food(
           title: params['title'][0],
           restaurantCategoryId: params['categoryId'][0],
-          geoHash: params['geohash'][0],
+          longitude: num.tryParse(splits[0]),
+          latitude: num.tryParse(splits[1]),
         );
       },
     ));

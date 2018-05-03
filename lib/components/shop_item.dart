@@ -4,11 +4,14 @@ import '../style/style.dart';
 import '../components/rating_star.dart';
 import '../config/config.dart';
 
-class UiUtils {
-  static final _shopPadding = new EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0);
-  static final _shopHeight = 100.0;
+class ShopItem extends StatelessWidget {
+  ShopItem(Restaurant restaurant) : restaurant=restaurant, assert(restaurant != null);
+  final Restaurant restaurant;
+  final _shopPadding = new EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0);
+  final _shopHeight = 100.0;
 
-  static Widget buildRestaurant(Restaurant restaurant) {
+  @override
+  Widget build(BuildContext context) {
     var detailRow = new Row(
       children: <Widget>[],
     );
@@ -113,9 +116,7 @@ class UiUtils {
     var distanceRow = new Row(
       children: <Widget>[],
     );
-    num distance = num.parse(restaurant.distance, (value) {
-      return null;
-    });
+    num distance = num.tryParse(restaurant.distance);
     if (distance != null) {
       distanceRow.children.add(
         new Text(
@@ -209,7 +210,7 @@ class UiUtils {
     );
   }
 
-  static bool zhunshi(Restaurant r) {
+  bool zhunshi(Restaurant r) {
     if (r.supports != null && r.supports.length > 0) {
       for (var s in r.supports) {
         if (s.iconName == '准') {
