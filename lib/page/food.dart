@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../components/head_bar.dart';
 import '../style/style.dart';
+import '../components/drop_down.dart';
 
 class Food extends StatefulWidget {
   Food({
@@ -28,8 +29,46 @@ class FoodState extends State<Food> {
         leadingType: HeadBarLeadingType.goBack,
         showUser: false,
       ),
-      body: new Container(),
+      body: new ListView.builder(
+        itemCount: 1,
+        itemBuilder: (context, i) {
+          if (i == 0) {
+            return _buildSortContainer();
+          }
+        },
+      ),
       backgroundColor: Style.emptyBackgroundColor,
+    );
+  }
+
+  Widget _buildSortContainer() {
+    return new Row(
+      children: <Widget>[
+        new Expanded(
+          child: new DropDown(
+            text: widget.title,
+            color: Style.backgroundColor,
+          ),
+        ),
+        new Expanded(
+          child: new DropDown(
+            text: '排序',
+            decoration: new BoxDecoration(
+              color: Style.backgroundColor,
+              border: new Border(
+                left: new BorderSide(color: Style.borderColor),
+                right: new BorderSide(color: Style.borderColor),
+              ),
+            ),
+          ),
+        ),
+        new Expanded(
+          child: new DropDown(
+            text: '筛选',
+            color: Style.backgroundColor,
+          ),
+        ),
+      ],
     );
   }
 }
