@@ -38,9 +38,9 @@ class FoodState extends State<Food> {
       body: new Column(
         children: <Widget>[
           _buildSortContainer(),
-          new Expanded(
-            child: new ShopList(widget.longitude, widget.latitude, widget.restaurantCategoryId),
-          ),
+//          new Expanded(
+//            child: new ShopList(widget.longitude, widget.latitude, widget.restaurantCategoryId),
+//          ),
         ],
       ),
       backgroundColor: Style.emptyBackgroundColor,
