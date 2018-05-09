@@ -9,4 +9,4 @@ For help getting started with Flutter, view our online
 
 ## Current Flutter Version
 
-0.2.10
+0.4.0
