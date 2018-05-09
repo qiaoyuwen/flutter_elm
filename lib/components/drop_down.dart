@@ -4,18 +4,25 @@ import '../style/style.dart';
 
 
 const Duration _kDropDownSheetDuration = const Duration(milliseconds: 200);
+typedef Offset _GetOffsetCall();
 
 class DropDown extends StatefulWidget {
   DropDown({
     String text,
     Color color,
     Decoration decoration,
+    _GetOffsetCall getOffset,
+    WidgetBuilder builder,
   })  : text = text,
         color = color,
-        decoration = decoration;
+        decoration = decoration,
+        getOffset = getOffset,
+        builder = builder;
   final String text;
   final Color color;
   final Decoration decoration;
+  final _GetOffsetCall getOffset;
+  final WidgetBuilder builder;
 
   @override
   createState() => new DropDownState();
@@ -58,16 +65,17 @@ class DropDownState extends State<DropDown> {
   }
 
   void _show() {
+    Offset offset = widget.getOffset();
     _showDropDownSheet(
       context: context,
       builder: (context) {
         return new Stack(
           children: <Widget>[
             new Positioned(
-              top: 150.0,
+              top: offset.dy,
               right: 0.0,
               bottom: 0.0,
-              left: 0.0,
+              left: offset.dx,
               child: new Container(
                 color: Colors.black54,
               ),
@@ -77,19 +85,15 @@ class DropDownState extends State<DropDown> {
               left: 0.0,
               right: 0.0,
               child: new Container(
-                padding: new EdgeInsets.only(top: 100.0),
+                color: Style.backgroundColor,
+                padding: new EdgeInsets.only(top: offset.dy),
+                child: widget.builder(context),
               ),
             ),
           ],
         );
       },
     );
-    /*showModalBottomSheet(context: context, builder: (context) {
-      return new Container(
-        height: 300.0,
-        child: new Text('qiaoyuwen'),
-      );
-    });*/
   }
 }
 

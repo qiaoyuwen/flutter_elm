@@ -37,7 +37,9 @@ class FoodState extends State<Food> {
       ),
       body: new Column(
         children: <Widget>[
-          _buildSortContainer(),
+          new _FilterContainer(
+            categoryTitle: widget.title,
+          ),
 //          new Expanded(
 //            child: new ShopList(widget.longitude, widget.latitude, widget.restaurantCategoryId),
 //          ),
@@ -46,14 +48,24 @@ class FoodState extends State<Food> {
       backgroundColor: Style.emptyBackgroundColor,
     );
   }
+}
 
-  Widget _buildSortContainer() {
+class _FilterContainer extends StatelessWidget {
+  _FilterContainer({
+    this.categoryTitle = '',
+  });
+
+  final String categoryTitle;
+
+  @override
+  Widget build(BuildContext context) {
     return new Row(
       children: <Widget>[
         new Expanded(
           child: new DropDown(
-            text: widget.title,
+            text: categoryTitle,
             color: Style.backgroundColor,
+            getOffset: () => getOffset(context),
           ),
         ),
         new Expanded(
@@ -66,15 +78,23 @@ class FoodState extends State<Food> {
                 right: new BorderSide(color: Style.borderColor),
               ),
             ),
+            getOffset: () => getOffset(context),
           ),
         ),
         new Expanded(
           child: new DropDown(
             text: '筛选',
             color: Style.backgroundColor,
+            getOffset: () => getOffset(context),
           ),
         ),
       ],
     );
+  }
+
+  Offset getOffset(BuildContext context) {
+    final RenderBox renderBox = context.findRenderObject();
+    final RenderBox overlay = Overlay.of(context).context.findRenderObject();
+    return renderBox.localToGlobal(renderBox.size.bottomLeft(Offset.zero), ancestor: overlay);
   }
 }
