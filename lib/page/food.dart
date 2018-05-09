@@ -6,6 +6,7 @@ import '../components/shop_list.dart';
 import '../model/category.dart';
 import '../utils/api.dart';
 import '../config/config.dart';
+import '../model/sub_category.dart';
 
 class Food extends StatefulWidget {
   Food({
@@ -62,6 +63,7 @@ class FoodState extends State<Food> {
           new _FilterContainer(
             categoryTitle: widget.title,
             categories: _categories,
+            restaurantCategoryId: widget.restaurantCategoryId,
           ),
 //          new Expanded(
 //            child: new ShopList(widget.longitude, widget.latitude, widget.restaurantCategoryId),
@@ -77,10 +79,12 @@ class _FilterContainer extends StatelessWidget {
   _FilterContainer({
     this.categoryTitle = '',
     this.categories,
+    this.restaurantCategoryId,
   });
 
   final String categoryTitle;
   final List<Category> categories;
+  final String restaurantCategoryId;
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +95,10 @@ class _FilterContainer extends StatelessWidget {
             text: categoryTitle,
             color: Style.backgroundColor,
             getOffset: () => getOffset(context),
-            content: new _CategoryList(categories: categories,),
+            content: new _CategoryList(
+              categories: categories,
+              restaurantCategoryId: restaurantCategoryId
+            ),
           ),
         ),
         new Expanded(
@@ -105,7 +112,7 @@ class _FilterContainer extends StatelessWidget {
               ),
             ),
             getOffset: () => getOffset(context),
-            content: new _CategoryList(categories: categories,),
+            content: new Container(),
           ),
         ),
         new Expanded(
@@ -113,7 +120,7 @@ class _FilterContainer extends StatelessWidget {
             text: '筛选',
             color: Style.backgroundColor,
             getOffset: () => getOffset(context),
-            content: new _CategoryList(categories: categories,),
+            content: new Container(),
           ),
         ),
       ],
@@ -130,43 +137,56 @@ class _FilterContainer extends StatelessWidget {
 class _CategoryList extends StatefulWidget {
   _CategoryList({
     this.categories,
+    this.restaurantCategoryId,
   });
   final List<Category> categories;
+  final String restaurantCategoryId;
 
   @override
   createState() => new _CategoryListState();
 }
 
 class _CategoryListState extends State<_CategoryList> {
+  int _curCategoryId = 0;
+  List<SubCategory> _subCategories = [];
+
   @override
   Widget build(BuildContext context) {
-    return new Row(
-      children: <Widget>[
-        Expanded(
-          child: _buildCategories(),
-        ),
-        Expanded(
-          child: _buildCategories(),
-        ),
-      ],
+    _curCategoryId = int.tryParse(widget.restaurantCategoryId);
+    widget.categories.forEach((c) {
+      if (_curCategoryId == c.id) {
+        _subCategories = c.subCategories;
+      }
+    });
+    return new Container(
+      height: 40.0 * widget.categories.length,
+      child: new Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Expanded(
+            child: _buildCategories(),
+          ),
+          Expanded(
+            child: _buildSubCategories(),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildCategories() {
-    return new Container(
-      padding: new EdgeInsets.symmetric(horizontal: 10.0),
-      color: new Color(0xfff1f1f1),
-      child: new Column(
-        children: widget.categories.map((category) {
-          return _buildCategory(category);
-        }).toList(),
-      ),
+    return new Column(
+      children: widget.categories.map((category) {
+        return _buildCategory(category);
+      }).toList(),
     );
   }
 
   Widget _buildCategory(Category category) {
     return new Container(
-      padding: new EdgeInsets.symmetric(vertical: 10.0),
+      height: 40.0,
+      padding: new EdgeInsets.all(10.0),
+      color: category.id == _curCategoryId ? Style.backgroundColor : new Color(0xfff1f1f1),
       child: new Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -226,5 +246,44 @@ class _CategoryListState extends State<_CategoryList> {
     }
     String url = '/' + path.substring(0, 1) + '/' + path.substring(1, 3) + '/' + path.substring(3) + suffix;
     return '${Config.ImgCdnUrl}$url';
+  }
+
+  Widget _buildSubCategories() {
+    return new Container(
+      color: Style.backgroundColor,
+      child: new Column(
+        children: _subCategories.map((sc){
+          return _buildSubCategory(sc);
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildSubCategory(SubCategory subCategory) {
+    return new Container(
+      height: 40.0,
+      padding: new EdgeInsets.only(left: 10.0, top: 10.0),
+      child: new Container(
+        padding: new EdgeInsets.only(right: 10.0, bottom: 10.0),
+        decoration: new BoxDecoration(
+          border: new Border(
+            bottom: new BorderSide(
+              color: Style.borderColor,
+            )
+          ),
+        ),
+        child: new Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            new Text(
+              subCategory.name,
+            ),
+            new Text(
+              '${subCategory.count}',
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
