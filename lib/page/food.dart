@@ -3,6 +3,9 @@ import '../components/head_bar.dart';
 import '../style/style.dart';
 import '../components/drop_down.dart';
 import '../components/shop_list.dart';
+import '../model/category.dart';
+import '../utils/api.dart';
+import '../config/config.dart';
 
 class Food extends StatefulWidget {
   Food({
@@ -27,6 +30,25 @@ class Food extends StatefulWidget {
 }
 
 class FoodState extends State<Food> {
+
+  List<Category> _categories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getFoodCategory();
+  }
+
+  getFoodCategory() async {
+    List<Category> categories = await Api.getFoodCategory(
+        latitude: widget.latitude,
+        longitude: widget.longitude
+    );
+    setState(() {
+      _categories = categories;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -39,6 +61,7 @@ class FoodState extends State<Food> {
         children: <Widget>[
           new _FilterContainer(
             categoryTitle: widget.title,
+            categories: _categories,
           ),
 //          new Expanded(
 //            child: new ShopList(widget.longitude, widget.latitude, widget.restaurantCategoryId),
@@ -53,9 +76,11 @@ class FoodState extends State<Food> {
 class _FilterContainer extends StatelessWidget {
   _FilterContainer({
     this.categoryTitle = '',
+    this.categories,
   });
 
   final String categoryTitle;
+  final List<Category> categories;
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +91,7 @@ class _FilterContainer extends StatelessWidget {
             text: categoryTitle,
             color: Style.backgroundColor,
             getOffset: () => getOffset(context),
+            content: new _CategoryList(categories: categories,),
           ),
         ),
         new Expanded(
@@ -79,6 +105,7 @@ class _FilterContainer extends StatelessWidget {
               ),
             ),
             getOffset: () => getOffset(context),
+            content: new _CategoryList(categories: categories,),
           ),
         ),
         new Expanded(
@@ -86,6 +113,7 @@ class _FilterContainer extends StatelessWidget {
             text: '筛选',
             color: Style.backgroundColor,
             getOffset: () => getOffset(context),
+            content: new _CategoryList(categories: categories,),
           ),
         ),
       ],
@@ -96,5 +124,107 @@ class _FilterContainer extends StatelessWidget {
     final RenderBox renderBox = context.findRenderObject();
     final RenderBox overlay = Overlay.of(context).context.findRenderObject();
     return renderBox.localToGlobal(renderBox.size.bottomLeft(Offset.zero), ancestor: overlay);
+  }
+}
+
+class _CategoryList extends StatefulWidget {
+  _CategoryList({
+    this.categories,
+  });
+  final List<Category> categories;
+
+  @override
+  createState() => new _CategoryListState();
+}
+
+class _CategoryListState extends State<_CategoryList> {
+  @override
+  Widget build(BuildContext context) {
+    return new Row(
+      children: <Widget>[
+        Expanded(
+          child: _buildCategories(),
+        ),
+        Expanded(
+          child: _buildCategories(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCategories() {
+    return new Container(
+      padding: new EdgeInsets.symmetric(horizontal: 10.0),
+      color: new Color(0xfff1f1f1),
+      child: new Column(
+        children: widget.categories.map((category) {
+          return _buildCategory(category);
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildCategory(Category category) {
+    return new Container(
+      padding: new EdgeInsets.symmetric(vertical: 10.0),
+      child: new Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          new Row(
+            children: <Widget>[
+              new Container(
+                margin: new EdgeInsets.only(right: 7.0),
+                child: new Image.network(
+                  _getImgPath(category.imageUrl),
+                  width: 25.0,
+                  height: 25.0,
+                ),
+              ),
+              new Text(category.name),
+            ],
+          ),
+          new Row(
+            children: <Widget>[
+              new Container(
+                padding: new EdgeInsets.symmetric(horizontal: 4.0),
+                margin: new EdgeInsets.only(right: 5.0),
+                decoration: new BoxDecoration(
+                  color: new Color(0xffcccccc),
+                  borderRadius: new BorderRadius.all(
+                    new Radius.circular(10.0),
+                  ),
+                ),
+                child: new Text(
+                  '${category.count}',
+                  style: new TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              new Icon(
+                Icons.arrow_forward_ios,
+                color: new Color(0xffbbbbbb),
+                size: 10.0,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  //传递过来的图片地址需要处理后才能正常使用
+  String _getImgPath(String path) {
+    String suffix;
+    if (path == null || path.isEmpty) {
+      return 'http://test.fe.ptdev.cn/elm/elmlogo.jpeg';
+    }
+    if (path.indexOf('jpeg') != -1) {
+      suffix = '.jpeg';
+    } else {
+      suffix = '.png';
+    }
+    String url = '/' + path.substring(0, 1) + '/' + path.substring(1, 3) + '/' + path.substring(3) + suffix;
+    return '${Config.ImgCdnUrl}$url';
   }
 }

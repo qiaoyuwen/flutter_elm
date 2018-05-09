@@ -12,17 +12,17 @@ class DropDown extends StatefulWidget {
     Color color,
     Decoration decoration,
     _GetOffsetCall getOffset,
-    WidgetBuilder builder,
+    Widget content,
   })  : text = text,
         color = color,
         decoration = decoration,
         getOffset = getOffset,
-        builder = builder;
+        content = content;
   final String text;
   final Color color;
   final Decoration decoration;
   final _GetOffsetCall getOffset;
-  final WidgetBuilder builder;
+  final Widget content;
 
   @override
   createState() => new DropDownState();
@@ -85,9 +85,8 @@ class DropDownState extends State<DropDown> {
               left: 0.0,
               right: 0.0,
               child: new Container(
-                color: Style.backgroundColor,
                 padding: new EdgeInsets.only(top: offset.dy),
-                child: widget.builder(context),
+                child: widget.content,
               ),
             ),
           ],
