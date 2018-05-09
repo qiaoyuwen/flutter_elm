@@ -76,8 +76,11 @@ class DropDownState extends State<DropDown> {
               right: 0.0,
               bottom: 0.0,
               left: offset.dx,
-              child: new Container(
-                color: Colors.black54,
+              child: new GestureDetector(
+                child: new Container(
+                  color: Colors.black54,
+                ),
+                onTap: () => Navigator.pop(context),
               ),
             ),
             new Positioned(
@@ -152,16 +155,13 @@ class _DropDownSheet<T> extends StatefulWidget {
 class _DropDownSheetState<T> extends State<_DropDownSheet<T>> {
   @override
   Widget build(BuildContext context) {
-    return new GestureDetector(
-      onTap: () => Navigator.pop(context),
-      child: new AnimatedBuilder(
-        animation: widget.route.animation,
-        builder: (BuildContext context, Widget child) {
-          return new ClipRect(
-            child: widget.route.builder(context),
-          );
-        }
-      )
+    return new AnimatedBuilder(
+      animation: widget.route.animation,
+      builder: (BuildContext context, Widget child) {
+        return new ClipRect(
+          child: widget.route.builder(context),
+        );
+      }
     );
   }
 }

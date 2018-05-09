@@ -33,6 +33,7 @@ class Food extends StatefulWidget {
 class FoodState extends State<Food> {
 
   List<Category> _categories = [];
+  List<SubCategory> _subCategories = [];
 
   @override
   void initState() {
@@ -47,6 +48,11 @@ class FoodState extends State<Food> {
     );
     setState(() {
       _categories = categories;
+      categories.forEach((c) {
+        if (c.id == 207) {
+          _subCategories = c.subCategories;
+        }
+      });
     });
   }
 
@@ -143,94 +149,106 @@ class _CategoryList extends StatefulWidget {
   final String restaurantCategoryId;
 
   @override
-  createState() => new _CategoryListState();
+  createState() => new _CategoryListState(restaurantCategoryId);
 }
 
 class _CategoryListState extends State<_CategoryList> {
+  _CategoryListState(String restaurantCategoryId){
+    _curCategoryId = int.tryParse(restaurantCategoryId);
+  }
   int _curCategoryId = 0;
   List<SubCategory> _subCategories = [];
 
   @override
   Widget build(BuildContext context) {
-    _curCategoryId = int.tryParse(widget.restaurantCategoryId);
     widget.categories.forEach((c) {
       if (_curCategoryId == c.id) {
         _subCategories = c.subCategories;
       }
     });
-    return new Container(
-      height: 40.0 * widget.categories.length,
-      child: new Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Expanded(
-            child: _buildCategories(),
-          ),
-          Expanded(
-            child: _buildSubCategories(),
-          ),
-        ],
-      ),
+    return new Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Expanded(
+          child: _buildCategories(),
+        ),
+        Expanded(
+          child: _buildSubCategories(),
+        ),
+      ],
     );
   }
 
   Widget _buildCategories() {
-    return new Column(
-      children: widget.categories.map((category) {
-        return _buildCategory(category);
-      }).toList(),
+    return new Container(
+      height: 40.0 * widget.categories.length,
+      child: new Column(
+        children: widget.categories.map((category) {
+          return _buildCategory(category);
+        }).toList(),
+      ),
     );
   }
 
   Widget _buildCategory(Category category) {
-    return new Container(
-      height: 40.0,
-      padding: new EdgeInsets.all(10.0),
-      color: category.id == _curCategoryId ? Style.backgroundColor : new Color(0xfff1f1f1),
-      child: new Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          new Row(
-            children: <Widget>[
-              new Container(
-                margin: new EdgeInsets.only(right: 7.0),
-                child: new Image.network(
-                  _getImgPath(category.imageUrl),
-                  width: 25.0,
-                  height: 25.0,
-                ),
-              ),
-              new Text(category.name),
-            ],
-          ),
-          new Row(
-            children: <Widget>[
-              new Container(
-                padding: new EdgeInsets.symmetric(horizontal: 4.0),
-                margin: new EdgeInsets.only(right: 5.0),
-                decoration: new BoxDecoration(
-                  color: new Color(0xffcccccc),
-                  borderRadius: new BorderRadius.all(
-                    new Radius.circular(10.0),
+    return new GestureDetector(
+      child: new Container(
+        height: 40.0,
+        padding: new EdgeInsets.all(10.0),
+        color: category.id == _curCategoryId ? Style.backgroundColor : new Color(0xfff1f1f1),
+        child: new Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            new Row(
+              children: <Widget>[
+                new Container(
+                  margin: new EdgeInsets.only(right: 7.0),
+                  child: new Image.network(
+                    _getImgPath(category.imageUrl),
+                    width: 25.0,
+                    height: 25.0,
                   ),
                 ),
-                child: new Text(
-                  '${category.count}',
-                  style: new TextStyle(
-                    color: Colors.white,
+                new Text(category.name),
+              ],
+            ),
+            new Row(
+              children: <Widget>[
+                new Container(
+                  padding: new EdgeInsets.symmetric(horizontal: 4.0),
+                  margin: new EdgeInsets.only(right: 5.0),
+                  decoration: new BoxDecoration(
+                    color: new Color(0xffcccccc),
+                    borderRadius: new BorderRadius.all(
+                      new Radius.circular(10.0),
+                    ),
+                  ),
+                  child: new Text(
+                    '${category.count}',
+                    style: new TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-              new Icon(
-                Icons.arrow_forward_ios,
-                color: new Color(0xffbbbbbb),
-                size: 10.0,
-              ),
-            ],
-          ),
-        ],
+                new Icon(
+                  Icons.arrow_forward_ios,
+                  color: new Color(0xffbbbbbb),
+                  size: 10.0,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
+      onTap: () => _selectCategory(category),
     );
+  }
+
+  void _selectCategory(Category category) {
+    print(category.id);
+    setState(() {
+      _curCategoryId = category.id;
+    });
   }
 
   //传递过来的图片地址需要处理后才能正常使用
@@ -250,11 +268,15 @@ class _CategoryListState extends State<_CategoryList> {
 
   Widget _buildSubCategories() {
     return new Container(
-      color: Style.backgroundColor,
-      child: new Column(
-        children: _subCategories.map((sc){
-          return _buildSubCategory(sc);
-        }).toList(),
+      height: 40.0 * widget.categories.length,
+      decoration: new BoxDecoration(
+        color: Style.backgroundColor,
+      ),
+      child: new ListView.builder(
+        itemCount: _subCategories.length,
+        itemBuilder: (context, i) {
+          return _buildSubCategory(_subCategories[i]);
+        },
       ),
     );
   }
