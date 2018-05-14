@@ -8,7 +8,7 @@ import '../utils/api.dart';
 import '../config/config.dart';
 import '../model/sub_category.dart';
 
-typedef void _SelectedCategoryCallBack();
+typedef void _SelectedCategoryCallBack(String categoryId, SubCategory subCategory);
 
 class Food extends StatefulWidget {
   Food({
@@ -29,15 +29,18 @@ class Food extends StatefulWidget {
   final String restaurantCategoryId;
 
   @override
-  createState() => new FoodState(restaurantCategoryId);
+  createState() => new FoodState(restaurantCategoryId, title);
 }
 
 class FoodState extends State<Food> {
-  FoodState(String restaurantCategoryId){
+  FoodState(String restaurantCategoryId, String title){
     _restaurantCategoryId = restaurantCategoryId;
+    _title = title;
   }
 
+  String _title = '';
   String _restaurantCategoryId = '';
+  String _restaurantCategoryIds = '';
   List<Category> _categories = [];
   List<SubCategory> _subCategories = [];
 
@@ -61,20 +64,25 @@ class FoodState extends State<Food> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new HeadBar(
-        title: widget.title,
+        title: _title,
         leadingType: HeadBarLeadingType.goBack,
         showUser: false,
       ),
       body: new Column(
         children: <Widget>[
           new _FilterContainer(
-            categoryTitle: widget.title,
+            categoryTitle: _title,
             categories: _categories,
             restaurantCategoryId: _restaurantCategoryId,
             selectedCategoryCallBack: _selectedCategoryCallBack,
           ),
           new Expanded(
-            child: new ShopList(widget.longitude, widget.latitude, _restaurantCategoryId),
+            child: new ShopList(
+              widget.longitude,
+              widget.latitude,
+              _restaurantCategoryId,
+              restaurantCategoryIds: _restaurantCategoryIds,
+            ),
           ),
         ],
       ),
@@ -82,8 +90,12 @@ class FoodState extends State<Food> {
     );
   }
 
-  void _selectedCategoryCallBack() {
-
+  void _selectedCategoryCallBack(String categoryId, SubCategory subCategory) {
+    setState(() {
+      _title = subCategory.name;
+      _restaurantCategoryId = categoryId;
+      _restaurantCategoryIds = subCategory.id.toString();
+    });
   }
 }
 
@@ -256,7 +268,6 @@ class _CategoryListState extends State<_CategoryList> {
   }
 
   void _selectCategory(Category category) {
-    print(category.id);
     setState(() {
       _curCategoryId = category.id;
     });
@@ -319,7 +330,10 @@ class _CategoryListState extends State<_CategoryList> {
           ),
         ),
       ),
-      onTap: widget.selectedCategoryCallBack,
+      onTap: () {
+        widget.selectedCategoryCallBack(_curCategoryId.toString(), subCategory);
+        Navigator.pop(context);
+      },
     );
   }
 }

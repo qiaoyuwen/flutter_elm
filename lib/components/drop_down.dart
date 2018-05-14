@@ -87,9 +87,19 @@ class DropDownState extends State<DropDown> {
               top: 0.0,
               left: 0.0,
               right: 0.0,
-              child: new Container(
-                padding: new EdgeInsets.only(top: offset.dy),
-                child: widget.content,
+              child: new Column(
+                children: <Widget>[
+                  new GestureDetector(
+                    child: new Container(
+                      color: new Color(0x00000000),
+                      height: offset.dy,
+                    ),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                  widget.content,
+                ],
               ),
             ),
           ],

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import '../model/restaurant.dart';
 import '../components/shop_item.dart';
@@ -5,11 +7,12 @@ import '../style/style.dart';
 import '../utils/api.dart';
 
 class ShopList extends StatefulWidget {
-  ShopList(num longitude, num latitude, String restaurantCategoryId)
+  ShopList(num longitude, num latitude, String restaurantCategoryId, {String restaurantCategoryIds=''})
       : longitude = longitude,
         latitude = latitude,
         geoHash = '$longitude,$latitude',
         restaurantCategoryId = restaurantCategoryId,
+        restaurantCategoryIds = restaurantCategoryIds,
         assert(longitude != null),
         assert(latitude != null);
 
@@ -17,6 +20,7 @@ class ShopList extends StatefulWidget {
   final num latitude;
   final String geoHash;
   final String restaurantCategoryId;
+  final String restaurantCategoryIds;
 
   @override
   State<StatefulWidget> createState() {
@@ -35,6 +39,14 @@ class ShopListState extends State<ShopList> {
   @override
   void initState() {
     super.initState();
+    getRestaurants();
+  }
+
+  @override
+  void didUpdateWidget(ShopList old) {
+    super.didUpdateWidget(old);
+    _restaurants = [];
+    _offset = 0;
     getRestaurants();
   }
 
@@ -71,19 +83,19 @@ class ShopListState extends State<ShopList> {
   }
 
   getRestaurants() async {
-    print('loading restaurants');
     _isLoading = true;
     List<Restaurant> restaurants = await Api.getRestaurants(
-        widget.latitude, widget.longitude, _offset,
-        limit: _restaurantLimit,
-        restaurantCategoryId: widget.restaurantCategoryId);
+      widget.latitude, widget.longitude, _offset,
+      limit: _restaurantLimit,
+      restaurantCategoryId: widget.restaurantCategoryId,
+      restaurantCategoryIds: widget.restaurantCategoryIds,
+    );
     if (restaurants.length < _restaurantLimit) {
       _loadingFinish = true;
     }
     setState(() {
       _restaurants.addAll(restaurants);
     });
-    print('loading finish');
     _isLoading = false;
   }
 }
