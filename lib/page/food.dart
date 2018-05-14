@@ -8,6 +8,8 @@ import '../utils/api.dart';
 import '../config/config.dart';
 import '../model/sub_category.dart';
 
+typedef void _SelectedCategoryCallBack();
+
 class Food extends StatefulWidget {
   Food({
     String title,
@@ -27,11 +29,15 @@ class Food extends StatefulWidget {
   final String restaurantCategoryId;
 
   @override
-  createState() => new FoodState();
+  createState() => new FoodState(restaurantCategoryId);
 }
 
 class FoodState extends State<Food> {
+  FoodState(String restaurantCategoryId){
+    _restaurantCategoryId = restaurantCategoryId;
+  }
 
+  String _restaurantCategoryId = '';
   List<Category> _categories = [];
   List<SubCategory> _subCategories = [];
 
@@ -48,11 +54,6 @@ class FoodState extends State<Food> {
     );
     setState(() {
       _categories = categories;
-      categories.forEach((c) {
-        if (c.id == 207) {
-          _subCategories = c.subCategories;
-        }
-      });
     });
   }
 
@@ -69,15 +70,20 @@ class FoodState extends State<Food> {
           new _FilterContainer(
             categoryTitle: widget.title,
             categories: _categories,
-            restaurantCategoryId: widget.restaurantCategoryId,
+            restaurantCategoryId: _restaurantCategoryId,
+            selectedCategoryCallBack: _selectedCategoryCallBack,
           ),
-//          new Expanded(
-//            child: new ShopList(widget.longitude, widget.latitude, widget.restaurantCategoryId),
-//          ),
+          new Expanded(
+            child: new ShopList(widget.longitude, widget.latitude, _restaurantCategoryId),
+          ),
         ],
       ),
       backgroundColor: Style.emptyBackgroundColor,
     );
+  }
+
+  void _selectedCategoryCallBack() {
+
   }
 }
 
@@ -86,11 +92,13 @@ class _FilterContainer extends StatelessWidget {
     this.categoryTitle = '',
     this.categories,
     this.restaurantCategoryId,
+    this.selectedCategoryCallBack,
   });
 
   final String categoryTitle;
   final List<Category> categories;
   final String restaurantCategoryId;
+  final _SelectedCategoryCallBack selectedCategoryCallBack;
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +111,8 @@ class _FilterContainer extends StatelessWidget {
             getOffset: () => getOffset(context),
             content: new _CategoryList(
               categories: categories,
-              restaurantCategoryId: restaurantCategoryId
+              restaurantCategoryId: restaurantCategoryId,
+              selectedCategoryCallBack: selectedCategoryCallBack,
             ),
           ),
         ),
@@ -144,9 +153,11 @@ class _CategoryList extends StatefulWidget {
   _CategoryList({
     this.categories,
     this.restaurantCategoryId,
+    this.selectedCategoryCallBack,
   });
   final List<Category> categories;
   final String restaurantCategoryId;
+  final _SelectedCategoryCallBack selectedCategoryCallBack;
 
   @override
   createState() => new _CategoryListState(restaurantCategoryId);
@@ -282,30 +293,33 @@ class _CategoryListState extends State<_CategoryList> {
   }
 
   Widget _buildSubCategory(SubCategory subCategory) {
-    return new Container(
-      height: 40.0,
-      padding: new EdgeInsets.only(left: 10.0, top: 10.0),
+    return new GestureDetector(
       child: new Container(
-        padding: new EdgeInsets.only(right: 10.0, bottom: 10.0),
-        decoration: new BoxDecoration(
-          border: new Border(
-            bottom: new BorderSide(
-              color: Style.borderColor,
-            )
+        height: 40.0,
+        padding: new EdgeInsets.only(left: 10.0, top: 10.0),
+        child: new Container(
+          padding: new EdgeInsets.only(right: 10.0, bottom: 10.0),
+          decoration: new BoxDecoration(
+            border: new Border(
+                bottom: new BorderSide(
+                  color: Style.borderColor,
+                )
+            ),
+          ),
+          child: new Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              new Text(
+                subCategory.name,
+              ),
+              new Text(
+                '${subCategory.count}',
+              ),
+            ],
           ),
         ),
-        child: new Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            new Text(
-              subCategory.name,
-            ),
-            new Text(
-              '${subCategory.count}',
-            ),
-          ],
-        ),
       ),
+      onTap: widget.selectedCategoryCallBack,
     );
   }
 }
