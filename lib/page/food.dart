@@ -99,6 +99,68 @@ class FoodState extends State<Food> {
   }
 }
 
+class _SortItem {
+  _SortItem({
+    this.title = '',
+    this.icon,
+  });
+
+  final String title;
+  final Icon icon;
+}
+
+final _SortIconSize = 20.0;
+final _SortList = [
+  new _SortItem(
+    title: '智能排序',
+    icon: new Icon(
+      Icons.sort,
+      size: _SortIconSize,
+      color: new Color(0xff3b87c8),
+    ),
+  ),
+  new _SortItem(
+    title: '距离最近',
+    icon: new Icon(
+      Icons.place,
+      size: _SortIconSize,
+      color: new Color(0xff2a9bd3),
+    ),
+  ),
+  new _SortItem(
+    title: '销量最高',
+    icon: new Icon(
+      Icons.whatshot,
+      size: _SortIconSize,
+      color: new Color(0xfff07373),
+    ),
+  ),
+  new _SortItem(
+    title: '起送价最低',
+    icon: new Icon(
+      Icons.monetization_on,
+      size: _SortIconSize,
+      color: new Color(0xffe6b61a),
+    ),
+  ),
+  new _SortItem(
+    title: '配送速度最快',
+    icon: new Icon(
+      Icons.access_time,
+      size: _SortIconSize,
+      color: new Color(0xff37c7b7),
+    ),
+  ),
+  new _SortItem(
+    title: '评分最高',
+    icon: new Icon(
+      Icons.star_border,
+      size: _SortIconSize,
+      color: new Color(0xffeba53b),
+    ),
+  ),
+];
+
 class _FilterContainer extends StatelessWidget {
   _FilterContainer({
     this.categoryTitle = '',
@@ -139,7 +201,7 @@ class _FilterContainer extends StatelessWidget {
               ),
             ),
             getOffset: () => getOffset(context),
-            content: new Container(),
+            content: _buildSortList(),
           ),
         ),
         new Expanded(
@@ -158,6 +220,42 @@ class _FilterContainer extends StatelessWidget {
     final RenderBox renderBox = context.findRenderObject();
     final RenderBox overlay = Overlay.of(context).context.findRenderObject();
     return renderBox.localToGlobal(renderBox.size.bottomLeft(Offset.zero), ancestor: overlay);
+  }
+
+  Widget _buildSortList() {
+    return new Column(
+      children: _SortList.map((item) {
+        return new Container(
+          height: 50.0,
+          color: Style.backgroundColor,
+          child: new Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              new Container(
+                margin: new EdgeInsets.only(left: 15.0, right: 10.0),
+                child: item.icon,
+              ),
+              new Expanded(
+                child: new Container(
+                  decoration: new BoxDecoration(
+                    border: new Border(
+                      bottom: new BorderSide(
+                        color: Style.borderColor,
+                      ),
+                    ),
+                  ),
+                  child: new Row(
+                    children: <Widget>[
+                      new Text(item.title)
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
   }
 }
 
