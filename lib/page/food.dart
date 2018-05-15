@@ -9,6 +9,7 @@ import '../config/config.dart';
 import '../model/sub_category.dart';
 
 typedef void _SelectedCategoryCallBack(String categoryId, SubCategory subCategory);
+typedef void _SelectedSortTypeCallBack(_SortItem sortItem);
 
 class Food extends StatefulWidget {
   Food({
@@ -43,6 +44,7 @@ class FoodState extends State<Food> {
   String _restaurantCategoryIds = '';
   List<Category> _categories = [];
   List<SubCategory> _subCategories = [];
+  String _sortByType = '';
 
   @override
   void initState() {
@@ -75,6 +77,8 @@ class FoodState extends State<Food> {
             categories: _categories,
             restaurantCategoryId: _restaurantCategoryId,
             selectedCategoryCallBack: _selectedCategoryCallBack,
+            selectedSortTypeCallBack: _selectedSortTypeCallBack,
+            sortByType: _sortByType,
           ),
           new Expanded(
             child: new ShopList(
@@ -82,6 +86,7 @@ class FoodState extends State<Food> {
               widget.latitude,
               _restaurantCategoryId,
               restaurantCategoryIds: _restaurantCategoryIds,
+              sortByType: _sortByType,
             ),
           ),
         ],
@@ -97,66 +102,80 @@ class FoodState extends State<Food> {
       _restaurantCategoryIds = subCategory.id.toString();
     });
   }
+
+  void _selectedSortTypeCallBack(_SortItem sortItem) {
+    setState(() {
+      _sortByType = sortItem.id.toString();
+    });
+  }
 }
 
 class _SortItem {
-  _SortItem({
+  const _SortItem({
+    this.id = 0,
     this.title = '',
     this.icon,
   });
 
+  final int id;
   final String title;
   final Icon icon;
 }
 
-final _SortIconSize = 20.0;
-final _SortList = [
-  new _SortItem(
+const _SortIconSize = 20.0;
+const _SortList = [
+  const _SortItem(
+    id: 0,
     title: '智能排序',
-    icon: new Icon(
+    icon: const Icon(
       Icons.sort,
       size: _SortIconSize,
-      color: new Color(0xff3b87c8),
+      color: const Color(0xff3b87c8),
     ),
   ),
-  new _SortItem(
+  const _SortItem(
+    id: 5,
     title: '距离最近',
-    icon: new Icon(
+    icon: const Icon(
       Icons.place,
       size: _SortIconSize,
-      color: new Color(0xff2a9bd3),
+      color: const Color(0xff2a9bd3),
     ),
   ),
-  new _SortItem(
+  const _SortItem(
+    id: 6,
     title: '销量最高',
-    icon: new Icon(
+    icon: const Icon(
       Icons.whatshot,
       size: _SortIconSize,
-      color: new Color(0xfff07373),
+      color: const Color(0xfff07373),
     ),
   ),
-  new _SortItem(
+  const _SortItem(
+    id: 1,
     title: '起送价最低',
-    icon: new Icon(
+    icon: const Icon(
       Icons.monetization_on,
       size: _SortIconSize,
-      color: new Color(0xffe6b61a),
+      color: const Color(0xffe6b61a),
     ),
   ),
-  new _SortItem(
+  const _SortItem(
+    id: 2,
     title: '配送速度最快',
-    icon: new Icon(
+    icon: const Icon(
       Icons.access_time,
       size: _SortIconSize,
-      color: new Color(0xff37c7b7),
+      color: const Color(0xff37c7b7),
     ),
   ),
-  new _SortItem(
+  const _SortItem(
+    id: 3,
     title: '评分最高',
-    icon: new Icon(
+    icon: const Icon(
       Icons.star_border,
       size: _SortIconSize,
-      color: new Color(0xffeba53b),
+      color: const Color(0xffeba53b),
     ),
   ),
 ];
@@ -167,12 +186,16 @@ class _FilterContainer extends StatelessWidget {
     this.categories,
     this.restaurantCategoryId,
     this.selectedCategoryCallBack,
+    this.selectedSortTypeCallBack,
+    this.sortByType = '',
   });
 
   final String categoryTitle;
   final List<Category> categories;
   final String restaurantCategoryId;
   final _SelectedCategoryCallBack selectedCategoryCallBack;
+  final _SelectedSortTypeCallBack selectedSortTypeCallBack;
+  final sortByType;
 
   @override
   Widget build(BuildContext context) {
@@ -201,7 +224,7 @@ class _FilterContainer extends StatelessWidget {
               ),
             ),
             getOffset: () => getOffset(context),
-            content: _buildSortList(),
+            content: _buildSortList(context, sortByType),
           ),
         ),
         new Expanded(
@@ -222,37 +245,57 @@ class _FilterContainer extends StatelessWidget {
     return renderBox.localToGlobal(renderBox.size.bottomLeft(Offset.zero), ancestor: overlay);
   }
 
-  Widget _buildSortList() {
+  Widget _buildSortList(BuildContext context, String sortByType) {
     return new Column(
       children: _SortList.map((item) {
-        return new Container(
-          height: 50.0,
-          color: Style.backgroundColor,
-          child: new Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              new Container(
-                margin: new EdgeInsets.only(left: 15.0, right: 10.0),
-                child: item.icon,
+        var descRow = new Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            new Text(item.title)
+          ],
+        );
+        if (sortByType == item.id.toString()) {
+          descRow.children.add(
+            new Container(
+              margin: new EdgeInsets.only(right: 10.0),
+              child: new Icon(
+                Icons.done,
+                color: new Color(0xff3190e8),
               ),
-              new Expanded(
-                child: new Container(
-                  decoration: new BoxDecoration(
-                    border: new Border(
-                      bottom: new BorderSide(
-                        color: Style.borderColor,
+            )
+          );
+        }
+
+        return new GestureDetector(
+          child: new Container(
+            height: 50.0,
+            color: Style.backgroundColor,
+            child: new Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                new Container(
+                  margin: new EdgeInsets.only(left: 15.0, right: 10.0),
+                  child: item.icon,
+                ),
+                new Expanded(
+                  child: new Container(
+                    decoration: new BoxDecoration(
+                      border: new Border(
+                        bottom: new BorderSide(
+                          color: Style.borderColor,
+                        ),
                       ),
                     ),
-                  ),
-                  child: new Row(
-                    children: <Widget>[
-                      new Text(item.title)
-                    ],
+                    child: descRow,
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
+          onTap: () {
+            Navigator.pop(context);
+            selectedSortTypeCallBack(item);
+          },
         );
       }).toList(),
     );

@@ -7,12 +7,14 @@ import '../style/style.dart';
 import '../utils/api.dart';
 
 class ShopList extends StatefulWidget {
-  ShopList(num longitude, num latitude, String restaurantCategoryId, {String restaurantCategoryIds=''})
+  ShopList(num longitude, num latitude, String restaurantCategoryId,
+      {String restaurantCategoryIds = '', String sortByType = ''})
       : longitude = longitude,
         latitude = latitude,
         geoHash = '$longitude,$latitude',
         restaurantCategoryId = restaurantCategoryId,
         restaurantCategoryIds = restaurantCategoryIds,
+        sortByType = sortByType,
         assert(longitude != null),
         assert(latitude != null);
 
@@ -21,6 +23,7 @@ class ShopList extends StatefulWidget {
   final String geoHash;
   final String restaurantCategoryId;
   final String restaurantCategoryIds;
+  final String sortByType;
 
   @override
   State<StatefulWidget> createState() {
@@ -85,10 +88,13 @@ class ShopListState extends State<ShopList> {
   getRestaurants() async {
     _isLoading = true;
     List<Restaurant> restaurants = await Api.getRestaurants(
-      widget.latitude, widget.longitude, _offset,
+      widget.latitude,
+      widget.longitude,
+      _offset,
       limit: _restaurantLimit,
       restaurantCategoryId: widget.restaurantCategoryId,
       restaurantCategoryIds: widget.restaurantCategoryIds,
+      orderBy: widget.sortByType,
     );
     if (restaurants.length < _restaurantLimit) {
       _loadingFinish = true;
