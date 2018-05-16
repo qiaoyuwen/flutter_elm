@@ -5,16 +5,27 @@ class Button extends StatelessWidget {
   Button(
       {double width,
       double height,
-      String text = '',
+      Widget text,
+      Color bgColor,
+      Decoration decoration,
       GestureTapCallback onTap})
       : width = width,
         height = height,
         text = text,
+        decoration = decoration,
         onTap = onTap;
   final double width;
   final double height;
-  final String text;
+  final Widget text;
+  final Decoration decoration;
   final GestureTapCallback onTap;
+
+  final _defaultDecoration = new BoxDecoration(
+    color: Style.primaryColor,
+    borderRadius: new BorderRadius.all(
+      new Radius.circular(5.0),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -22,20 +33,9 @@ class Button extends StatelessWidget {
       child: new Container(
         width: width,
         height: height,
-        decoration: new BoxDecoration(
-          color: Style.primaryColor,
-          borderRadius: new BorderRadius.all(
-            new Radius.circular(5.0),
-          ),
-        ),
+        decoration: decoration == null ? _defaultDecoration : decoration,
         child: new Center(
-          child: new Text(
-            text,
-            style: new TextStyle(
-              fontSize: 18.0,
-              color: const Color(0xFFFFFFFF),
-            ),
-          ),
+          child: text,
         ),
       ),
       onTap: onTap,

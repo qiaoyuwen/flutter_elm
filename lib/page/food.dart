@@ -7,9 +7,13 @@ import '../model/category.dart';
 import '../utils/api.dart';
 import '../config/config.dart';
 import '../model/sub_category.dart';
+import '../model/delivery_mode.dart';
+import '../model/activity.dart';
+import '../components/button.dart';
 
 typedef void _SelectedCategoryCallBack(String categoryId, SubCategory subCategory);
 typedef void _SelectedSortTypeCallBack(_SortItem sortItem);
+typedef void _SelectedPropertyFilterCallBack(int id, bool checked);
 
 class Food extends StatefulWidget {
   Food({
@@ -45,11 +49,15 @@ class FoodState extends State<Food> {
   List<Category> _categories = [];
   List<SubCategory> _subCategories = [];
   String _sortByType = '';
+  List<DeliveryMode> _deliveryModes = [];
+  List<Activity> _activities = [];
 
   @override
   void initState() {
     super.initState();
     getFoodCategory();
+    getFoodDelivery();
+    getFoodActivity();
   }
 
   getFoodCategory() async {
@@ -59,6 +67,26 @@ class FoodState extends State<Food> {
     );
     setState(() {
       _categories = categories;
+    });
+  }
+
+  getFoodDelivery() async {
+    List<DeliveryMode> deliveryModes = await Api.getFoodDelivery(
+        latitude: widget.latitude,
+        longitude: widget.longitude
+    );
+    setState(() {
+      _deliveryModes = deliveryModes;
+    });
+  }
+
+  getFoodActivity() async {
+    List<Activity> activities = await Api.getFoodActivity(
+        latitude: widget.latitude,
+        longitude: widget.longitude
+    );
+    setState(() {
+      _activities = activities;
     });
   }
 
@@ -72,13 +100,15 @@ class FoodState extends State<Food> {
       ),
       body: new Column(
         children: <Widget>[
-          new _FilterContainer(
+          new _FilterBar(
             categoryTitle: _title,
             categories: _categories,
             restaurantCategoryId: _restaurantCategoryId,
             selectedCategoryCallBack: _selectedCategoryCallBack,
             selectedSortTypeCallBack: _selectedSortTypeCallBack,
             sortByType: _sortByType,
+            deliveryModes: _deliveryModes,
+            activities: _activities,
           ),
           new Expanded(
             child: new ShopList(
@@ -180,14 +210,16 @@ const _SortList = [
   ),
 ];
 
-class _FilterContainer extends StatelessWidget {
-  _FilterContainer({
+class _FilterBar extends StatelessWidget {
+  _FilterBar({
     this.categoryTitle = '',
     this.categories,
     this.restaurantCategoryId,
     this.selectedCategoryCallBack,
     this.selectedSortTypeCallBack,
     this.sortByType = '',
+    this.deliveryModes,
+    this.activities,
   });
 
   final String categoryTitle;
@@ -196,6 +228,8 @@ class _FilterContainer extends StatelessWidget {
   final _SelectedCategoryCallBack selectedCategoryCallBack;
   final _SelectedSortTypeCallBack selectedSortTypeCallBack;
   final sortByType;
+  final List<DeliveryMode> deliveryModes;
+  final List<Activity> activities;
 
   @override
   Widget build(BuildContext context) {
@@ -206,7 +240,7 @@ class _FilterContainer extends StatelessWidget {
             text: categoryTitle,
             color: Style.backgroundColor,
             getOffset: () => getOffset(context),
-            content: new _CategoryList(
+            content: new _CategoryFilter(
               categories: categories,
               restaurantCategoryId: restaurantCategoryId,
               selectedCategoryCallBack: selectedCategoryCallBack,
@@ -232,7 +266,10 @@ class _FilterContainer extends StatelessWidget {
             text: '筛选',
             color: Style.backgroundColor,
             getOffset: () => getOffset(context),
-            content: new Container(),
+            content: new _PropertyFilter(
+              deliveryModes: deliveryModes,
+              activities: activities,
+            ),
           ),
         ),
       ],
@@ -302,8 +339,8 @@ class _FilterContainer extends StatelessWidget {
   }
 }
 
-class _CategoryList extends StatefulWidget {
-  _CategoryList({
+class _CategoryFilter extends StatefulWidget {
+  _CategoryFilter({
     this.categories,
     this.restaurantCategoryId,
     this.selectedCategoryCallBack,
@@ -313,11 +350,11 @@ class _CategoryList extends StatefulWidget {
   final _SelectedCategoryCallBack selectedCategoryCallBack;
 
   @override
-  createState() => new _CategoryListState(restaurantCategoryId);
+  createState() => new _CategoryFilterState(restaurantCategoryId);
 }
 
-class _CategoryListState extends State<_CategoryList> {
-  _CategoryListState(String restaurantCategoryId){
+class _CategoryFilterState extends State<_CategoryFilter> {
+  _CategoryFilterState(String restaurantCategoryId){
     _curCategoryId = int.tryParse(restaurantCategoryId);
   }
   int _curCategoryId = 0;
@@ -476,5 +513,321 @@ class _CategoryListState extends State<_CategoryList> {
         Navigator.pop(context);
       },
     );
+  }
+}
+
+class _PropertyFilter extends StatefulWidget {
+  _PropertyFilter({
+    this.deliveryModes = const [],
+    this.activities = const [],
+    this.selectedDeliveries = const [],
+    this.selectedActivities = const [],
+  });
+
+  final List<DeliveryMode> deliveryModes;
+  final List<Activity> activities;
+  final List<int> selectedDeliveries;
+  final List<int> selectedActivities;
+
+  @override
+  State<StatefulWidget> createState() {
+    return new _PropertyFilterState(selectedDeliveries, selectedActivities);
+  }
+}
+
+class _PropertyFilterState extends State<_PropertyFilter> {
+  _PropertyFilterState(List<int> selectedDeliveries, List<int> selectedActivities){
+    _selectedDeliveries.addAll(selectedDeliveries);
+    _selectedActivities.addAll(selectedActivities);
+  }
+  List<int> _selectedDeliveries = [];
+  List<int> _selectedActivities = [];
+
+  final _gPadding = new EdgeInsets.all(10.0);
+  final _colCount = 3;
+
+  @override
+  Widget build(BuildContext context) {
+    var deliveryCol = new Column(
+      children: <Widget>[],
+    );
+    Row deliveryRow;
+    for (int i = 0; i < widget.deliveryModes.length; ++i) {
+      if (i % _colCount == 0) {
+        deliveryRow = new Row(
+          children: <Widget>[],
+        );
+        deliveryCol.children.add(
+          new Container(
+            margin: new EdgeInsets.only(bottom: 5.0),
+            child: deliveryRow,
+          )
+        );
+      }
+      int id = widget.deliveryModes[i].id;
+      String text = widget.deliveryModes[i].text;
+      String color = '0xff${widget.deliveryModes[i].color}';
+      String tag = text.substring(0, 1);
+      bool checked = _selectedDeliveries.contains(id);
+      deliveryRow.children.add(
+        new Expanded(
+          child: new Container(
+            margin: new EdgeInsets.only(right: i % _colCount != 2 ? 5.0 : 0.0),
+            child: new _CheckedBtn(
+              id: id,
+              tag: tag,
+              tagColor: new Color(int.parse(color)),
+              text: text,
+              onTap: _deliverySelected,
+              checked: checked,
+            ),
+          ),
+        )
+      );
+    }
+    if (deliveryRow != null && deliveryRow.children.length < _colCount) {
+      for (int i = deliveryRow.children.length; i < _colCount; i++) {
+        deliveryRow.children.add(new Expanded(child: new Container()));
+      }
+    }
+    
+    /*var activityCol = new Column(
+      children: <Widget>[],
+    );
+    Row activityRow;
+    for (int i = 0; i < widget.activities.length; ++i) {
+      if (i % _colCount == 0) {
+        activityRow = new Row(
+          children: <Widget>[],
+        );
+        activityCol.children.add(
+          new Container(
+            margin: new EdgeInsets.only(bottom: 5.0),
+            child: activityRow,
+          )
+        );
+      }
+      int id = widget.activities[i].id;
+      String text = widget.activities[i].name;
+      String color = '0xff${widget.activities[i].iconColor}';
+      String tag = widget.activities[i].iconName;
+      bool checked = _selectedActivities.contains(id);
+      activityRow.children.add(
+          new Expanded(
+            child: new Container(
+              margin: new EdgeInsets.only(right: i % _colCount != 2 ? 5.0 : 0.0),
+              child: new _CheckedBtn(
+                id: id,
+                tag: tag,
+                tagColor: new Color(int.parse(color)),
+                text: text,
+                onTap: _activitySelected,
+                checked: checked,
+              ),
+            ),
+          )
+      );
+    }
+    if (activityRow != null && activityRow.children.length < _colCount) {
+      for (int i = activityRow.children.length; i < _colCount; i++) {
+        activityRow.children.add(new Expanded(child: new Container()));
+      }
+    }*/
+
+    int selectedCount = _selectedDeliveries.length + _selectedActivities.length;
+    return new Column(
+      children: <Widget>[
+        new Container(
+          color: Style.backgroundColor,
+          padding: _gPadding,
+          child: new Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              new Text('配送方式'),
+              new Container(
+                margin: new EdgeInsets.only(top: 10.0),
+                child: deliveryCol,
+              ),
+              new Container(
+                margin: new EdgeInsets.only(top: 5.0),
+                child: new Text('商家属性（可以多选）'),
+              ),
+              /*new Container(
+                margin: new EdgeInsets.only(top: 10.0),
+                child: activityCol,
+              ),*/
+            ],
+          ),
+        ),
+        new Container(
+          color: Style.emptyBackgroundColor,
+          padding: _gPadding,
+          child: new Row(
+            children: <Widget>[
+              new Expanded(
+                child: new Container(
+                  margin: new EdgeInsets.only(right: 10.0),
+                  child: new Button(
+                    height: 40.0,
+                    decoration: new BoxDecoration(
+                      color: Style.backgroundColor,
+                      borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
+                    ),
+                    text: new Text(
+                        '清空',
+                        style: new TextStyle(
+                          fontSize: 18.0,
+                        )
+                    ),
+                    onTap: _clear,
+                  ),
+                ),
+              ),
+              new Expanded(
+                child: new Button(
+                  height: 40.0,
+                  decoration: new BoxDecoration(
+                    color: new Color(0xff56d176),
+                    borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
+                  ),
+                  text: new Text(
+                      '确定${selectedCount > 0 ? '($selectedCount)' : ''}',
+                      style: new TextStyle(
+                        fontSize: 18.0,
+                        color: new Color(0xffffffff),
+                      )
+                  ),
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
+
+  void _deliverySelected(int id, bool checked) {
+    setState(() {
+      if (checked) {
+        _selectedDeliveries.add(id);
+      } else {
+        _selectedDeliveries.remove(id);
+      }
+    });
+  }
+
+  void _activitySelected(int id, bool checked) {
+    setState(() {
+      if (checked) {
+        _selectedActivities.add(id);
+      } else {
+        _selectedActivities.remove(id);
+      }
+    });
+  }
+
+  void _clear() {
+    setState(() {
+      _selectedDeliveries = [];
+      _selectedActivities = [];
+    });
+  }
+}
+
+class _CheckedBtn extends StatefulWidget {
+  _CheckedBtn({
+    this.id,
+    this.tag,
+    this.tagColor,
+    this.text,
+    this.onTap,
+    this.checked = false,
+  });
+  final int id;
+  final String tag;
+  final Color tagColor;
+  final String text;
+  final _SelectedPropertyFilterCallBack onTap;
+  final bool checked;
+  @override
+  State<StatefulWidget> createState() {
+    return new _CheckedBtnState(checked);
+  }
+}
+
+class _CheckedBtnState extends State<_CheckedBtn> {
+  _CheckedBtnState(bool checked) {
+    _checked = checked;
+  }
+  bool _checked;
+  @override
+  Widget build(BuildContext context) {
+    var descRow = new Row(
+      children: <Widget>[],
+    );
+    if (_checked) {
+      descRow.children.add(
+        new Container(
+          width: 25.0,
+          height: 25.0,
+          child: new Icon(
+            Icons.done,
+            color: new Color(0xff3190e8),
+          ),
+        )
+      );
+    } else {
+      descRow.children.add(
+        new Container(
+          width: 25.0,
+          height: 25.0,
+          decoration: new BoxDecoration(
+            border: new Border.all(
+              color: widget.tagColor,
+            ),
+            borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
+          ),
+          child: new Center(
+            child: new Text(
+              widget.tag,
+              style: new TextStyle(
+                  color: widget.tagColor
+              ),
+            ),
+          ),
+        )
+      );
+    }
+    descRow.children.add(
+      new Container(
+        margin: new EdgeInsets.only(left: 5.0),
+        child: new Text(
+          widget.text,
+          style: new TextStyle(
+            color: _checked ? new Color(0xff3190e8) : null,
+          ),
+        ),
+      ),
+    );
+    return new GestureDetector(
+      child: new Container(
+        padding: new EdgeInsets.all(7.0),
+        decoration: new BoxDecoration(
+          border: new Border.all(
+            color: Style.borderColor,
+          ),
+          borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
+        ),
+        child: descRow,
+      ),
+      onTap: _onClick,
+    );
+  }
+
+  void _onClick() {
+    setState(() {
+      _checked = !_checked;
+      widget.onTap(widget.id, _checked);
+    });
   }
 }

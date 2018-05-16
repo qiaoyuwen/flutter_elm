@@ -5,6 +5,8 @@ import '../model/food_type.dart';
 import '../model/restaurant.dart';
 import '../model/support.dart';
 import '../model/category.dart';
+import '../model/delivery_mode.dart';
+import '../model/activity.dart';
 
 class Api {
   static final String _host = 'http://cangdu.org:8001';
@@ -209,6 +211,34 @@ class Api {
       }
     } catch (e) {
       print('getFoodCategory error: $e');
+    }
+    return result;
+  }
+
+  static getFoodDelivery({num latitude, num longitude}) async {
+    List<DeliveryMode> result = [];
+    try {
+      var uri = Uri.parse('$_host/shopping/v1/restaurants/delivery_modes?latitude=$latitude&longitude=$longitude&kw=');
+      var data = await HttpUtils.httpGet(uri);
+      if (data is List) {
+        result = data.map((item) => new DeliveryMode.fromJson(item)).toList();
+      }
+    } catch (e) {
+      print('getFoodDelivery error: $e');
+    }
+    return result;
+  }
+
+  static getFoodActivity({num latitude, num longitude}) async {
+    List<Activity> result = [];
+    try {
+      var uri = Uri.parse('$_host/shopping/v1/restaurants/activity_attributes?latitude=$latitude&longitude=$longitude&kw=');
+      var data = await HttpUtils.httpGet(uri);
+      if (data is List) {
+        result = data.map((item) => new Activity.fromJson(item)).toList();
+      }
+    } catch (e) {
+      print('getFoodActivity error: $e');
     }
     return result;
   }

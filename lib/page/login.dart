@@ -91,7 +91,13 @@ class LoginState extends State<Login> {
                   padding: _gTopPadding,
                   child: new Button(
                     height: 40.0,
-                    text: '登录',
+                    text: new Text(
+                      '登录',
+                      style: new TextStyle(
+                        fontSize: 18.0,
+                        color: const Color(0xFFFFFFFF),
+                      ),
+                    ),
                     onTap: _login,
                   ),
                 ),

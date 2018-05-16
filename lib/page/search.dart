@@ -181,7 +181,13 @@ class SearchState extends State<Search> {
           new Button(
             width: 60.0,
             height: 46.0,
-            text: '搜索',
+            text: new Text(
+              '搜索',
+              style: new TextStyle(
+                fontSize: 18.0,
+                color: const Color(0xFFFFFFFF),
+              ),
+            ),
             onTap: _search,
           )
         ],
