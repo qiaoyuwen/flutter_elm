@@ -8,13 +8,15 @@ import '../utils/api.dart';
 
 class ShopList extends StatefulWidget {
   ShopList(num longitude, num latitude, String restaurantCategoryId,
-      {String restaurantCategoryIds = '', String sortByType = ''})
+      {String restaurantCategoryIds = '', String sortByType = '', String deliveryMode = '', List<int> supportsIds = const []})
       : longitude = longitude,
         latitude = latitude,
         geoHash = '$longitude,$latitude',
         restaurantCategoryId = restaurantCategoryId,
         restaurantCategoryIds = restaurantCategoryIds,
         sortByType = sortByType,
+        deliveryMode = deliveryMode,
+        supportsIds = supportsIds,
         assert(longitude != null),
         assert(latitude != null);
 
@@ -24,6 +26,8 @@ class ShopList extends StatefulWidget {
   final String restaurantCategoryId;
   final String restaurantCategoryIds;
   final String sortByType;
+  final String deliveryMode;
+  final List<int> supportsIds;
 
   @override
   State<StatefulWidget> createState() {
@@ -95,6 +99,8 @@ class ShopListState extends State<ShopList> {
       restaurantCategoryId: widget.restaurantCategoryId,
       restaurantCategoryIds: widget.restaurantCategoryIds,
       orderBy: widget.sortByType,
+      deliveryMode: widget.deliveryMode,
+      supportIds: widget.supportsIds,
     );
     if (restaurants.length < _restaurantLimit) {
       _loadingFinish = true;

@@ -123,7 +123,7 @@ class Api {
     String restaurantCategoryIds = '',
     String orderBy = '',
     String deliveryMode = '',
-    List<Support> supports = const [],
+    List<int> supportIds = const [],
     int limit = 20,
   }) async {
     List<Restaurant> restaurants = [];
@@ -138,8 +138,8 @@ class Api {
       url += '&order_by=$orderBy';
 
       String supportStr = '';
-      for (var support in supports) {
-        supportStr += '&support_ids[]=${support.id}';
+      for (var support in supportIds) {
+        supportStr += '&${Uri.encodeComponent('support_ids[]')}=$support';
       }
       url +=
           '&${Uri.encodeComponent('delivery_mode[]')}=${deliveryMode + supportStr}';

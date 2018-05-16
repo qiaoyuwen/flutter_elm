@@ -14,6 +14,7 @@ import '../components/button.dart';
 typedef void _SelectedCategoryCallBack(String categoryId, SubCategory subCategory);
 typedef void _SelectedSortTypeCallBack(_SortItem sortItem);
 typedef void _SelectedPropertyFilterCallBack(int id, bool checked);
+typedef void _SubmitPropertiesFilterCallBack(String deliveryMode, List<int> supportIds);
 
 class Food extends StatefulWidget {
   Food({
@@ -51,6 +52,8 @@ class FoodState extends State<Food> {
   String _sortByType = '';
   List<DeliveryMode> _deliveryModes = [];
   List<Activity> _activities = [];
+  String _selectedDeliveryMode = '';
+  List<int> _selectedActivities = [];
 
   @override
   void initState() {
@@ -109,6 +112,9 @@ class FoodState extends State<Food> {
             sortByType: _sortByType,
             deliveryModes: _deliveryModes,
             activities: _activities,
+            selectedDeliveryMode: _selectedDeliveryMode,
+            selectedActivities: _selectedActivities,
+            submitPropertiesFilterCallBack: _submitPropertiesFilterCallBack,
           ),
           new Expanded(
             child: new ShopList(
@@ -117,6 +123,8 @@ class FoodState extends State<Food> {
               _restaurantCategoryId,
               restaurantCategoryIds: _restaurantCategoryIds,
               sortByType: _sortByType,
+              deliveryMode: _selectedDeliveryMode,
+              supportsIds: _selectedActivities,
             ),
           ),
         ],
@@ -136,6 +144,13 @@ class FoodState extends State<Food> {
   void _selectedSortTypeCallBack(_SortItem sortItem) {
     setState(() {
       _sortByType = sortItem.id.toString();
+    });
+  }
+
+  void _submitPropertiesFilterCallBack(String deliveryMode, List<int> supportIds) {
+    setState(() {
+      _selectedDeliveryMode = deliveryMode;
+      _selectedActivities = supportIds;
     });
   }
 }
@@ -220,6 +235,9 @@ class _FilterBar extends StatelessWidget {
     this.sortByType = '',
     this.deliveryModes,
     this.activities,
+    this.selectedDeliveryMode,
+    this.selectedActivities,
+    this.submitPropertiesFilterCallBack,
   });
 
   final String categoryTitle;
@@ -230,6 +248,9 @@ class _FilterBar extends StatelessWidget {
   final sortByType;
   final List<DeliveryMode> deliveryModes;
   final List<Activity> activities;
+  final String selectedDeliveryMode;
+  final List<int> selectedActivities;
+  final _SubmitPropertiesFilterCallBack submitPropertiesFilterCallBack;
 
   @override
   Widget build(BuildContext context) {
@@ -269,6 +290,9 @@ class _FilterBar extends StatelessWidget {
             content: new _PropertyFilter(
               deliveryModes: deliveryModes,
               activities: activities,
+              selectedDelivery: selectedDeliveryMode,
+              selectedActivities: selectedActivities,
+              submitPropertiesFilterCallBack: submitPropertiesFilterCallBack,
             ),
           ),
         ),
@@ -520,27 +544,29 @@ class _PropertyFilter extends StatefulWidget {
   _PropertyFilter({
     this.deliveryModes = const [],
     this.activities = const [],
-    this.selectedDeliveries = const [],
+    this.selectedDelivery = '',
     this.selectedActivities = const [],
+    this.submitPropertiesFilterCallBack,
   });
 
   final List<DeliveryMode> deliveryModes;
   final List<Activity> activities;
-  final List<int> selectedDeliveries;
+  final String selectedDelivery;
   final List<int> selectedActivities;
+  final _SubmitPropertiesFilterCallBack submitPropertiesFilterCallBack;
 
   @override
   State<StatefulWidget> createState() {
-    return new _PropertyFilterState(selectedDeliveries, selectedActivities);
+    return new _PropertyFilterState(selectedDelivery, selectedActivities);
   }
 }
 
 class _PropertyFilterState extends State<_PropertyFilter> {
-  _PropertyFilterState(List<int> selectedDeliveries, List<int> selectedActivities){
-    _selectedDeliveries.addAll(selectedDeliveries);
+  _PropertyFilterState(String selectedDelivery, List<int> selectedActivities){
+    _selectedDelivery = selectedDelivery;
     _selectedActivities.addAll(selectedActivities);
   }
-  List<int> _selectedDeliveries = [];
+  String _selectedDelivery = '';
   List<int> _selectedActivities = [];
 
   final _gPadding = new EdgeInsets.all(10.0);
@@ -568,7 +594,7 @@ class _PropertyFilterState extends State<_PropertyFilter> {
       String text = widget.deliveryModes[i].text;
       String color = '0xff${widget.deliveryModes[i].color}';
       String tag = text.substring(0, 1);
-      bool checked = _selectedDeliveries.contains(id);
+      bool checked = _selectedDelivery == id.toString();
       deliveryRow.children.add(
         new Expanded(
           child: new Container(
@@ -634,7 +660,7 @@ class _PropertyFilterState extends State<_PropertyFilter> {
       }
     }
 
-    int selectedCount = _selectedDeliveries.length + _selectedActivities.length;
+    int selectedCount = (_selectedDelivery.isEmpty ? 0 : 1) + _selectedActivities.length;
     return new Column(
       children: <Widget>[
         new Container(
@@ -697,6 +723,7 @@ class _PropertyFilterState extends State<_PropertyFilter> {
                         color: new Color(0xffffffff),
                       )
                   ),
+                  onTap: _submit,
                 ),
               ),
             ],
@@ -709,9 +736,9 @@ class _PropertyFilterState extends State<_PropertyFilter> {
   void _deliverySelected(int id, bool checked) {
     setState(() {
       if (checked) {
-        _selectedDeliveries.add(id);
+        _selectedDelivery = id.toString();
       } else {
-        _selectedDeliveries.remove(id);
+        _selectedDelivery = '';
       }
     });
   }
@@ -728,9 +755,14 @@ class _PropertyFilterState extends State<_PropertyFilter> {
 
   void _clear() {
     setState(() {
-      _selectedDeliveries = [];
+      _selectedDelivery = '';
       _selectedActivities = [];
     });
+  }
+
+  void _submit() {
+    Navigator.pop(context);
+    widget.submitPropertiesFilterCallBack(_selectedDelivery, _selectedActivities);
   }
 }
 
