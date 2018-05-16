@@ -591,7 +591,7 @@ class _PropertyFilterState extends State<_PropertyFilter> {
       }
     }
     
-    /*var activityCol = new Column(
+    var activityCol = new Column(
       children: <Widget>[],
     );
     Row activityRow;
@@ -632,7 +632,7 @@ class _PropertyFilterState extends State<_PropertyFilter> {
       for (int i = activityRow.children.length; i < _colCount; i++) {
         activityRow.children.add(new Expanded(child: new Container()));
       }
-    }*/
+    }
 
     int selectedCount = _selectedDeliveries.length + _selectedActivities.length;
     return new Column(
@@ -652,10 +652,10 @@ class _PropertyFilterState extends State<_PropertyFilter> {
                 margin: new EdgeInsets.only(top: 5.0),
                 child: new Text('商家属性（可以多选）'),
               ),
-              /*new Container(
+              new Container(
                 margin: new EdgeInsets.only(top: 10.0),
                 child: activityCol,
-              ),*/
+              ),
             ],
           ),
         ),
@@ -734,7 +734,7 @@ class _PropertyFilterState extends State<_PropertyFilter> {
   }
 }
 
-class _CheckedBtn extends StatefulWidget {
+class _CheckedBtn extends StatelessWidget {
   _CheckedBtn({
     this.id,
     this.tag,
@@ -749,62 +749,52 @@ class _CheckedBtn extends StatefulWidget {
   final String text;
   final _SelectedPropertyFilterCallBack onTap;
   final bool checked;
-  @override
-  State<StatefulWidget> createState() {
-    return new _CheckedBtnState(checked);
-  }
-}
 
-class _CheckedBtnState extends State<_CheckedBtn> {
-  _CheckedBtnState(bool checked) {
-    _checked = checked;
-  }
-  bool _checked;
   @override
   Widget build(BuildContext context) {
     var descRow = new Row(
       children: <Widget>[],
     );
-    if (_checked) {
+    if (checked) {
       descRow.children.add(
-        new Container(
-          width: 25.0,
-          height: 25.0,
-          child: new Icon(
-            Icons.done,
-            color: new Color(0xff3190e8),
-          ),
-        )
+          new Container(
+            width: 25.0,
+            height: 25.0,
+            child: new Icon(
+              Icons.done,
+              color: new Color(0xff3190e8),
+            ),
+          )
       );
     } else {
       descRow.children.add(
-        new Container(
-          width: 25.0,
-          height: 25.0,
-          decoration: new BoxDecoration(
-            border: new Border.all(
-              color: widget.tagColor,
+          new Container(
+            width: 25.0,
+            height: 25.0,
+            decoration: new BoxDecoration(
+              border: new Border.all(
+                color: tagColor,
+              ),
+              borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
             ),
-            borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
-          ),
-          child: new Center(
-            child: new Text(
-              widget.tag,
-              style: new TextStyle(
-                  color: widget.tagColor
+            child: new Center(
+              child: new Text(
+                tag,
+                style: new TextStyle(
+                    color: tagColor
+                ),
               ),
             ),
-          ),
-        )
+          )
       );
     }
     descRow.children.add(
       new Container(
         margin: new EdgeInsets.only(left: 5.0),
         child: new Text(
-          widget.text,
+          text,
           style: new TextStyle(
-            color: _checked ? new Color(0xff3190e8) : null,
+            color: checked ? new Color(0xff3190e8) : null,
           ),
         ),
       ),
@@ -825,9 +815,6 @@ class _CheckedBtnState extends State<_CheckedBtn> {
   }
 
   void _onClick() {
-    setState(() {
-      _checked = !_checked;
-      widget.onTap(widget.id, _checked);
-    });
+    onTap(id, !checked);
   }
 }
