@@ -1,10 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import '../model/restaurant.dart';
 import '../components/shop_item.dart';
 import '../style/style.dart';
 import '../utils/api.dart';
+import '../routes/routes.dart';
 
 class ShopList extends StatefulWidget {
   ShopList(num longitude, num latitude, String restaurantCategoryId,
@@ -84,7 +83,7 @@ class ShopListState extends State<ShopList> {
               _offset += _restaurantLimit;
               getRestaurants();
             }
-            return new ShopItem(_restaurants[i]);
+            return new ShopItem(_restaurants[i], _goShop);
           }
         });
   }
@@ -109,5 +108,12 @@ class ShopListState extends State<ShopList> {
       _restaurants.addAll(restaurants);
     });
     _isLoading = false;
+  }
+
+  void _goShop(Restaurant restaurant) {
+    Routes.router.navigateTo(
+      context,
+      '/shop/${widget.geoHash}/${restaurant.id}',
+    );
   }
 }

@@ -153,7 +153,7 @@ class MSiteState extends State<MSite> {
             _offset += _restaurantLimit;
             getRestaurants();
           }
-          return new ShopItem(_restaurants[i - 2]);
+          return new ShopItem(_restaurants[i - 2], _goShop);
         }
       },
     );
@@ -240,5 +240,12 @@ class MSiteState extends State<MSite> {
     } else {
       return '';
     }
+  }
+
+  void _goShop(Restaurant restaurant) {
+    Routes.router.navigateTo(
+      context,
+      '/shop/${widget.geoHash}/${restaurant.id}',
+    );
   }
 }

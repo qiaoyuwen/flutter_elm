@@ -4,11 +4,14 @@ import '../style/style.dart';
 import '../components/rating_star.dart';
 import '../config/config.dart';
 
+typedef void _ShopItemOnTapCallBack(Restaurant restaurant);
+
 class ShopItem extends StatelessWidget {
-  ShopItem(Restaurant restaurant) : restaurant=restaurant, assert(restaurant != null);
+  ShopItem(Restaurant restaurant, _ShopItemOnTapCallBack onTap) : restaurant=restaurant, onTap=onTap, assert(restaurant != null);
   final Restaurant restaurant;
   final _shopPadding = new EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0);
   final _shopHeight = 100.0;
+  final _ShopItemOnTapCallBack onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -150,63 +153,66 @@ class ShopItem extends StatelessWidget {
         ),
       ),
     );
-    return new Container(
-      height: _shopHeight,
-      padding: _shopPadding,
-      decoration: new BoxDecoration(
-        color: Style.backgroundColor,
-        border: new Border(
-          bottom: new BorderSide(
-            color: Style.borderColor,
+    return new GestureDetector(
+      child: new Container(
+        height: _shopHeight,
+        padding: _shopPadding,
+        decoration: new BoxDecoration(
+          color: Style.backgroundColor,
+          border: new Border(
+            bottom: new BorderSide(
+              color: Style.borderColor,
+            ),
           ),
         ),
-      ),
-      child: new Row(
-        children: <Widget>[
-          new Container(
-            margin: new EdgeInsets.only(right: 10.0),
-            child: new Image.network(
-              '${Config.ImgBaseUrl}${restaurant.imagePath}',
-              width: 80.0,
-              height: 80.0,
-              fit: BoxFit.fill,
+        child: new Row(
+          children: <Widget>[
+            new Container(
+              margin: new EdgeInsets.only(right: 10.0),
+              child: new Image.network(
+                '${Config.ImgBaseUrl}${restaurant.imagePath}',
+                width: 80.0,
+                height: 80.0,
+                fit: BoxFit.fill,
+              ),
             ),
-          ),
-          new Expanded(
-            child: new Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                new Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    new Expanded(
-                      child: detailRow,
-                    ),
-                    supportsRow,
-                  ],
-                ),
-                new Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[ratingRow, ratingDescRow],
-                ),
-                new Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    new Text(
-                      '¥${restaurant.floatMinimumOrderAmount}起送 / ${restaurant
-                          .piecewiseAgentFee['tips']}',
-                      style: new TextStyle(
-                        fontSize: 12.0,
+            new Expanded(
+              child: new Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      new Expanded(
+                        child: detailRow,
                       ),
-                    ),
-                    distanceRow,
-                  ],
-                ),
-              ],
+                      supportsRow,
+                    ],
+                  ),
+                  new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[ratingRow, ratingDescRow],
+                  ),
+                  new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      new Text(
+                        '¥${restaurant.floatMinimumOrderAmount}起送 / ${restaurant
+                            .piecewiseAgentFee['tips']}',
+                        style: new TextStyle(
+                          fontSize: 12.0,
+                        ),
+                      ),
+                      distanceRow,
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+      onTap: () => onTap(restaurant),
     );
   }
 

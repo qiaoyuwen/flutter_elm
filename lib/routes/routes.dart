@@ -8,6 +8,7 @@ import '../page/search.dart';
 import '../page/order.dart';
 import '../page/profile.dart';
 import '../page/food.dart';
+import '../page/shop.dart';
 
 class Routes {
   static final router = new Router();
@@ -58,6 +59,11 @@ class Routes {
           longitude: num.tryParse(splits[0]),
           latitude: num.tryParse(splits[1]),
         );
+      },
+    ));
+    router.define('/shop/:geohash/:id', handler: new Handler(
+      handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+        return new Shop(params['geohash'][0], params['id'][0]);
       },
     ));
   }
