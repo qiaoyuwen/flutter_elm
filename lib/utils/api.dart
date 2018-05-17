@@ -3,10 +3,13 @@ import '../model/city.dart';
 import '../model/place.dart';
 import '../model/food_type.dart';
 import '../model/restaurant.dart';
-import '../model/support.dart';
 import '../model/category.dart';
 import '../model/delivery_mode.dart';
 import '../model/activity.dart';
+import '../model/menu.dart';
+import '../model/rating.dart';
+import '../model/rating_score.dart';
+import '../model/rating_tag.dart';
 
 class Api {
   static final String _host = 'http://cangdu.org:8001';
@@ -239,6 +242,83 @@ class Api {
       }
     } catch (e) {
       print('getFoodActivity error: $e');
+    }
+    return result;
+  }
+
+  static getShopById({
+    String shopId,
+    num latitude,
+    num longitude,
+  }) async {
+    Restaurant result;
+    try {
+      String extrasEncode = Uri.encodeComponent('extras[]');
+      String url = '$_host/shopping/restaurant/$shopId?latitude=$latitude&longitude=$longitude';
+      url += '&$extrasEncode=activities&$extrasEncode=album&$extrasEncode=license&$extrasEncode=identification&$extrasEncode=statistics';
+      var uri = Uri.parse(url);
+      var data = await HttpUtils.httpGet(uri);
+      result = new Restaurant.fromJson(data);
+    } catch (e) {
+      print('getShopById error: $e');
+    }
+    return result;
+  }
+
+  static getMenus(String shopId) async {
+    List<Menu> result = [];
+    try {
+      var uri = Uri.parse('$_host/shopping/v2/menu?restaurant_id=$shopId');
+      var data = await HttpUtils.httpGet(uri);
+      if (data is List) {
+        result = data.map((item) => new Menu.fromJson(item)).toList();
+      }
+    } catch (e) {
+      print('getMenu error: $e');
+    }
+    return result;
+  }
+
+  static getRatings({
+    String shopId,
+    int offset,
+    String tagName = '',
+  }) async {
+    List<Rating> result = [];
+    try {
+      var uri = Uri.parse('$_host/ugc/v2/restaurants/$shopId/ratings?has_content=true&offset=$offset&limit=10&tag_name=$tagName');
+      var data = await HttpUtils.httpGet(uri);
+      if (data is List) {
+        result = data.map((item) => new Rating.fromJson(item)).toList();
+      }
+    } catch (e) {
+      print('getRatings error: $e');
+    }
+    return result;
+  }
+
+  static getRatingScore(String shopId) async {
+    RatingScore result;
+    try {
+      var uri = Uri.parse('$_host/ugc/v2/restaurants/$shopId/ratings/scores');
+      var data = await HttpUtils.httpGet(uri);
+      result = new RatingScore.fromJson(data);
+    } catch (e) {
+      print('getRatingScores error: $e');
+    }
+    return result;
+  }
+
+  static getRatingTags(String shopId) async {
+    List<RatingTag> result = [];
+    try {
+      var uri = Uri.parse('$_host/ugc/v2/restaurants/$shopId/ratings/tags');
+      var data = await HttpUtils.httpGet(uri);
+      if (data is List) {
+        result = data.map((item) => new RatingTag.fromJson(item)).toList();
+      }
+    } catch (e) {
+      print('getRatingTags error: $e');
     }
     return result;
   }

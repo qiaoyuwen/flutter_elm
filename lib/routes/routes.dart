@@ -63,7 +63,12 @@ class Routes {
     ));
     router.define('/shop/:geohash/:id', handler: new Handler(
       handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-        return new Shop(params['geohash'][0], params['id'][0]);
+        var splits = params['geohash'][0].split(',');
+        return new Shop(
+          shopId: params['id'][0],
+          longitude: num.tryParse(splits[0]),
+          latitude: num.tryParse(splits[1]),
+        );
       },
     ));
   }
