@@ -124,7 +124,8 @@ class HeadBarState extends State<HeadBar> {
   }
 
   _goSearch() {
-    Routes.router.navigateTo(context, '/search');
+    String geoHash = store.state.geoHash;
+    Routes.router.navigateTo(context, '/search/$geoHash');
   }
 
   _goProfile() {

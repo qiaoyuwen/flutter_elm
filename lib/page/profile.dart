@@ -59,7 +59,6 @@ class ProfileState extends State<Profile> {
     return new Scaffold(
       appBar: new HeadBar(
         title: '我的',
-        leadingType: HeadBarLeadingType.goBack,
         showUser: false,
         bottom: _buildPersonDetail(),
       ),

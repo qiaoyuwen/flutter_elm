@@ -66,7 +66,11 @@ class FootBar extends StatelessWidget {
     }
     if (path.length > 0) {
       print('go to: $path');
-      Routes.router.navigateTo(context, path);
+      Routes.router.navigateTo(
+        context,
+        path,
+        replace: true,
+      );
     }
   }
 }

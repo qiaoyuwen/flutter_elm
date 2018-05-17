@@ -65,7 +65,6 @@ class SearchState extends State<Search> {
     return new Scaffold(
       appBar: new HeadBar(
         title: '搜索周边',
-        leadingType: HeadBarLeadingType.goBack,
         showUser: false,
       ),
       body: new ListView.builder(

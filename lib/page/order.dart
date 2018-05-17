@@ -14,7 +14,6 @@ class OrderState extends State<Order> {
     return new Scaffold(
       appBar: new HeadBar(
         title: '订单列表',
-        leadingType: HeadBarLeadingType.goBack,
         showUser: false,
       ),
       body: new Column(
