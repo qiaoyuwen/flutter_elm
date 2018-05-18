@@ -18,6 +18,7 @@ class HeadBar extends StatefulWidget implements PreferredSizeWidget {
     bool showUser: true,
     GestureTapCallback titleOnTap,
     PreferredSizeWidget bottom,
+    Color backgroundColor,
   })
       : leadingType = leadingType,
         title = title,
@@ -25,13 +26,15 @@ class HeadBar extends StatefulWidget implements PreferredSizeWidget {
         showUser = showUser,
         preferredSize = new Size.fromHeight(kToolbarHeight + (bottom?.preferredSize?.height ?? 0.0)),
         bottom=bottom,
-        titleOnTap=titleOnTap;
+        titleOnTap=titleOnTap,
+        backgroundColor = backgroundColor;
   final String title;
   final bool centerTitle;
   final HeadBarLeadingType leadingType;
   final bool showUser;
   final GestureTapCallback titleOnTap;
   final PreferredSizeWidget bottom;
+  final Color backgroundColor;
 
   @override
   createState() => new HeadBarState();
@@ -116,6 +119,7 @@ class HeadBarState extends State<HeadBar> {
       automaticallyImplyLeading: false,
       actions: actions,
       bottom: widget.bottom,
+      backgroundColor: widget.backgroundColor,
     );
   }
 
