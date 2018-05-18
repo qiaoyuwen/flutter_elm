@@ -5,7 +5,7 @@ import '../components/drop_down.dart';
 import '../components/shop_list.dart';
 import '../model/category.dart';
 import '../utils/api.dart';
-import '../config/config.dart';
+import '../utils/utils.dart';
 import '../model/sub_category.dart';
 import '../model/delivery_mode.dart';
 import '../model/activity.dart';
@@ -429,7 +429,7 @@ class _CategoryFilterState extends State<_CategoryFilter> {
                 new Container(
                   margin: new EdgeInsets.only(right: 7.0),
                   child: new Image.network(
-                    _getImgPath(category.imageUrl),
+                    Utils.getImgPath(category.imageUrl),
                     width: 25.0,
                     height: 25.0,
                   ),
@@ -473,21 +473,6 @@ class _CategoryFilterState extends State<_CategoryFilter> {
     setState(() {
       _curCategoryId = category.id;
     });
-  }
-
-  //传递过来的图片地址需要处理后才能正常使用
-  String _getImgPath(String path) {
-    String suffix;
-    if (path == null || path.isEmpty) {
-      return 'http://test.fe.ptdev.cn/elm/elmlogo.jpeg';
-    }
-    if (path.indexOf('jpeg') != -1) {
-      suffix = '.jpeg';
-    } else {
-      suffix = '.png';
-    }
-    String url = '/' + path.substring(0, 1) + '/' + path.substring(1, 3) + '/' + path.substring(3) + suffix;
-    return '${Config.ImgCdnUrl}$url';
   }
 
   Widget _buildSubCategories() {
