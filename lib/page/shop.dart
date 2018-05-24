@@ -158,6 +158,14 @@ class ShopState extends State<Shop> {
                 ),
               ),
             ),
+            bottomNavigationBar: new BottomAppBar(
+              hasNotch: true,
+              child: new Row(
+                children: <Widget>[
+                  new Icon(Icons.menu),
+                ],
+              ),
+            ),
           ),
         ),
       ],
@@ -244,7 +252,7 @@ class ShopState extends State<Shop> {
       color: new Color(0xfff5f5f5),
       child: new SizedBox.expand(
         child: new ListView.builder(
-          itemCount: _menus.length,
+          itemCount: _menus == null ? 0 : _menus.length,
           itemBuilder: (BuildContext context, int i) {
             Menu menu = _menus[i];
             Row menuRow = new Row(
@@ -263,9 +271,13 @@ class ShopState extends State<Shop> {
               );
             }
             menuRow.children.add(
-              new Text(
-                menu.name,
-              ),
+              new Expanded(
+                child: new Text(
+                  menu.name,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              )
             );
             return new Container(
               height: 60.0,
