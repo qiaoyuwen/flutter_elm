@@ -314,19 +314,42 @@ class ShopState extends State<Shop> {
           );
           col.children.add(
             new Container(
+              height: 50.0,
+              padding: new EdgeInsets.symmetric(horizontal: 10.0),
               color: new Color(0xfff5f5f5),
               child: new Row(
                 children: <Widget>[
-                  new Text(
-                    menu.name,
-                  ),
                   new Expanded(
-                    child: new Text(
-                      menu.description,
+                    child: new Row(
+                      crossAxisAlignment: CrossAxisAlignment.baseline,
+                      textBaseline: TextBaseline.alphabetic,
+                      children: <Widget>[
+                        new Padding(
+                          padding: new EdgeInsets.only(right: 5.0),
+                          child: new Text(
+                            menu.name,
+                            style: new TextStyle(
+                              fontSize: 16.0,
+                            ),
+                          ),
+                        ),
+                        new Expanded(
+                          child: new Text(
+                            menu.description,
+                            overflow: TextOverflow.ellipsis,
+                            style: new TextStyle(
+                              fontSize: 10.0,
+                              color: new Color(0xff999999),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                   new Icon(
                     Icons.more_horiz,
+                    color: new Color(0xff999999),
+                    size: 20.0,
                   )
                 ],
               ),
