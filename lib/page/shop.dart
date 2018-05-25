@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as Math;
 import '../model/restaurant.dart';
 import '../utils/api.dart';
 import '../model/menu.dart';
 import '../model/rating.dart';
 import '../model/rating_score.dart';
 import '../model/rating_tag.dart';
+import '../model/food.dart';
 import '../config/config.dart';
 import '../components/head_bar.dart';
 import '../style/style.dart';
@@ -242,6 +244,9 @@ class ShopState extends State<Shop> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         _buildMenuTypes(),
+        new Expanded(
+          child: _buildMenuFoods(),
+        ),
       ],
     );
   }
@@ -295,5 +300,120 @@ class ShopState extends State<Shop> {
         ),
       ),
     );
+  }
+
+  Widget _buildMenuFoods() {
+    return new SizedBox.expand(
+      child: new ListView.builder(
+        itemCount: _menus == null ? 0 : _menus.length,
+        itemBuilder: (BuildContext context, int i) {
+          Menu menu = _menus[i];
+          Column col = new Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[],
+          );
+          col.children.add(
+            new Container(
+              color: new Color(0xfff5f5f5),
+              child: new Row(
+                children: <Widget>[
+                  new Text(
+                    menu.name,
+                  ),
+                  new Expanded(
+                    child: new Text(
+                      menu.description,
+                    ),
+                  ),
+                  new Icon(
+                    Icons.more_horiz,
+                  )
+                ],
+              ),
+            ),
+          );
+          for (var food in menu.foods) {
+            var foodStack = new Stack(
+              children: <Widget>[],
+            );
+            foodStack.children.add(_buildFood(food));
+            if (food.attributes.length > 0) {
+              Map<String, dynamic> attr = _getNewAttrTag(food);
+              if (attr != null) {
+                foodStack.children.add(
+                    new Positioned(
+                      top: -20.0,
+                      left: -20.0,
+                      child: new Transform.rotate(
+                        angle: -Math.pi / 4,
+                        child: Container(
+                          width: 40.0,
+                          height: 40.0,
+                          color: new Color(0xff4cd964),
+                          child: new Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              new Text(
+                                '新品',
+                                style: new TextStyle(
+                                  color: Style.backgroundColor,
+                                  fontSize: 9.0,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                );
+              }
+            }
+            col.children.add(foodStack);
+          }
+          return col;
+        },
+      ),
+    );
+  }
+
+  Widget _buildFood(Food food) {
+    return new Container(
+      height: 120.0,
+      decoration: new BoxDecoration(
+          color: Style.backgroundColor,
+          border: new Border(
+            bottom: new BorderSide(
+              color: new Color(0xffebebeb),
+            ),
+          )
+      ),
+      child: new Text(
+          food.name
+      ),
+    );
+  }
+  
+  Map<String, dynamic> _getNewAttrTag(Food food) {
+    int index = food.attributes.indexWhere((attr) {
+      String name = attr['icon_name'];
+      if (name == '新') {
+        return true;
+      }
+      return false;
+    });
+    if (index == -1) {
+      return null;
+    }
+    return food.attributes[index];
+  }
+
+  List<Map<String, dynamic>> _getAttrTagExceptNew(Food food) {
+    return food.attributes.skipWhile((attr) {
+      String name = attr['icon_name'];
+      if (name == '新') {
+        return true;
+      }
+      return false;
+    });
   }
 }
