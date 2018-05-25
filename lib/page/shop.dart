@@ -400,8 +400,37 @@ class ShopState extends State<Shop> {
   }
 
   Widget _buildFood(Food food) {
+    List<dynamic> tags = _getAttrTagExceptNew(food);
+    var tagRow = new Row(
+      children: <Widget>[],
+    );
+    for (Map<String, dynamic> tag in tags) {
+      String color = tag['icon_color'];
+      String name = tag['icon_name'];
+      tagRow.children.add(
+        new Container(
+          margin: new EdgeInsets.only(left: 3.0),
+          padding: new EdgeInsets.symmetric(horizontal: 2.0),
+          decoration: new BoxDecoration(
+            border: new Border.all(
+              color: new Color(int.parse('0xff$color')),
+            ),
+            borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
+          ),
+          child: new Text(
+            name,
+            style: new TextStyle(
+              fontSize: 8.0,
+              color: new Color(int.parse('0xff$color')),
+            ),
+          ),
+        ),
+      );
+    }
+
     return new Container(
       height: 120.0,
+      padding: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0).copyWith(bottom: 5.0),
       decoration: new BoxDecoration(
           color: Style.backgroundColor,
           border: new Border(
@@ -410,8 +439,112 @@ class ShopState extends State<Shop> {
             ),
           )
       ),
-      child: new Text(
-          food.name
+      child: new SizedBox.expand(
+        child: new Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            new Container(
+              margin: new EdgeInsets.only(right: 10.0),
+              width: 40.0,
+              height: 40.0,
+              child: new Image.network(
+                '${Config.ImgBaseUrl}${food.imagePath}',
+              ),
+            ),
+            new Expanded(
+              child: new Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      new Expanded(
+                        child: new Text(
+                          food.name,
+                          overflow: TextOverflow.ellipsis,
+                          style: new TextStyle(
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ),
+                      tagRow,
+                    ],
+                  ),
+                  new Text(
+                    food.description,
+                    overflow: TextOverflow.ellipsis,
+                    style: new TextStyle(
+                      fontSize: 11.0,
+                      color: new Color(0xff999999),
+                    ),
+                  ),
+                  new Text(
+                    '月售${food.monthSales}份  好评率${food.satisfyRate}%',
+                    style: new TextStyle(
+                      fontSize: 12.0,
+                    ),
+                  ),
+                  food.activity == null ? new Container() : new Row(
+                    children: <Widget>[
+                      new Container(
+                        padding: new EdgeInsets.symmetric(horizontal: 2.0),
+                        decoration: new BoxDecoration(
+                          border: new Border.all(
+                            color: new Color(int.parse('0xff${food.activity['icon_color']}')),
+                          ),
+                          borderRadius: new BorderRadius.all(new Radius.circular(5.0)),
+                        ),
+                        child: new Text(
+                          food.activity['image_text'],
+                          style: new TextStyle(
+                            fontSize: 8.0,
+                            color: new Color(int.parse('0xff${food.activity['image_text_color']}')),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  new Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: <Widget>[
+                      new Row(
+                        children: <Widget>[
+                          new Text(
+                            '￥',
+                            style: new TextStyle(
+                              fontSize: 10.0,
+                              color: new Color(0xffff6600),
+                            ),
+                          ),
+                          new Text(
+                            '${food.specFoods[0].price}',
+                            style: new TextStyle(
+                              color: new Color(0xffff6600),
+                            ),
+                          ),
+                          food.specifications.length == 0 ? new Container() : new Container(
+                            margin: new EdgeInsets.only(left: 5.0),
+                            child: new Text(
+                              '起',
+                              style: new TextStyle(
+                                fontSize: 12.0,
+                                color: new Color(0xff666666),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -430,13 +563,13 @@ class ShopState extends State<Shop> {
     return food.attributes[index];
   }
 
-  List<Map<String, dynamic>> _getAttrTagExceptNew(Food food) {
+  List<dynamic> _getAttrTagExceptNew(Food food) {
     return food.attributes.skipWhile((attr) {
       String name = attr['icon_name'];
       if (name == '新') {
         return true;
       }
       return false;
-    });
+    }).toList();
   }
 }
