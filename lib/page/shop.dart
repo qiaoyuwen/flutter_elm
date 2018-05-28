@@ -324,7 +324,7 @@ class ShopState extends State<Shop> {
     _menuScrollController.animateTo(
       height,
       duration: new Duration(
-        milliseconds: 400,
+        milliseconds: 200,
       ),
       curve: Curves.linear,
     );

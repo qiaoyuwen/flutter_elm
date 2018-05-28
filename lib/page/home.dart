@@ -39,12 +39,12 @@ class HomeState extends State<Home> {
       color: Style.borderColor,
     ),
   );
+  final ScrollController _scrollController = new ScrollController();
 
   List<City> _hotCities = [];
   Map<String, List<City>> _citiesGroup = new Map();
   List<String> _citiesGroupKeys = [];
   City _guessCity;
-  ListView _listView;
 
   @override
   void initState() {
@@ -97,8 +97,8 @@ class HomeState extends State<Home> {
   }
 
   Widget _buildBody() {
-    _listView = new ListView.builder(
-      controller: new ScrollController(),
+    var listView = new ListView.builder(
+      controller: _scrollController,
       itemCount: 2 + _citiesGroupKeys.length,
       itemBuilder: (context, i) {
         if (i == 0) {
@@ -112,7 +112,7 @@ class HomeState extends State<Home> {
     );
     return new Stack(
       children: <Widget>[
-        _listView,
+        listView,
         new Positioned(
           top: 0.0,
           right: 0.0,
@@ -128,8 +128,23 @@ class HomeState extends State<Home> {
   }
 
   void _goCityGroup(String letter) {
-    var index = _citiesGroupKeys.indexOf(letter);
-    print(index);
+    letter = letter.toUpperCase();
+    double sep = 10.0;
+    double height = 5 * _lineHeight + 2 * sep;
+    int index = _citiesGroupKeys.indexOf(letter);
+    if (index != -1) {
+      for (int i = 0; i < index; ++i) {
+        var cities = _citiesGroup[_citiesGroupKeys[i]];
+        height += sep + (((cities.length / 4).ceil() + 1) * _lineHeight);
+      }
+    }
+    _scrollController.animateTo(
+      height,
+      duration: new Duration(
+        milliseconds: 200,
+      ),
+      curve: Curves.linear,
+    );
   }
 
   Widget _buildBlockContainer(Widget child) {

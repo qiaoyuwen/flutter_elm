@@ -12,9 +12,9 @@ class AlphabetBar extends StatelessWidget {
   final _letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
   final _textStyle = new TextStyle(
     color: Style.primaryColor,
-    fontSize: 11.0,
+    fontSize: 12.0,
   );
-  final _padding = new EdgeInsets.symmetric(vertical: 2.0);
+  final _padding = new EdgeInsets.symmetric(vertical: 2.0, horizontal: 5.0);
 
   @override
   build(BuildContext context) {
@@ -36,9 +36,6 @@ class AlphabetBar extends StatelessWidget {
         )
       );
     }
-    return new Padding(
-      padding: new EdgeInsets.symmetric(horizontal: 3.0),
-      child: column,
-    );
+    return column;
   }
 }
