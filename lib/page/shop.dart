@@ -37,6 +37,13 @@ class ShopState extends State<Shop> {
   int _ratingOffset = 0;
   RatingScore _ratingScore;
   List<RatingTag> _ratingTags;
+  int _menuIndex = 0;
+  ScrollController _menuTypeScrollController = new ScrollController();
+  ScrollController _menuScrollController = new ScrollController();
+
+  static const num _MenuTypeHeight = 60.0;
+  static const num _MenuTypeDescHeight = 50.0;
+  static const num _MenuHeight = 120.0;
 
   @override
   void initState() {
@@ -257,6 +264,7 @@ class ShopState extends State<Shop> {
       color: new Color(0xfff5f5f5),
       child: new SizedBox.expand(
         child: new ListView.builder(
+          controller: _menuTypeScrollController,
           itemCount: _menus == null ? 0 : _menus.length,
           itemBuilder: (BuildContext context, int i) {
             Menu menu = _menus[i];
@@ -284,17 +292,21 @@ class ShopState extends State<Shop> {
                 ),
               )
             );
-            return new Container(
-              height: 60.0,
-              padding: new EdgeInsets.symmetric(horizontal: 10.0),
-              decoration: new BoxDecoration(
-                  border: new Border(
-                    bottom: new BorderSide(
-                      color: new Color(0xffebebeb),
-                    ),
-                  )
+            return new GestureDetector(
+              child: new Container(
+                height: 60.0,
+                padding: new EdgeInsets.symmetric(horizontal: 10.0),
+                decoration: new BoxDecoration(
+                    color: _menuIndex == i ? Style.backgroundColor : null,
+                    border: new Border(
+                      bottom: new BorderSide(
+                        color: new Color(0xffebebeb),
+                      ),
+                    )
+                ),
+                child: menuRow,
               ),
-              child: menuRow,
+              onTap: () => _selectMenuType(i),
             );
           },
         ),
@@ -302,9 +314,29 @@ class ShopState extends State<Shop> {
     );
   }
 
+  void _selectMenuType(int index) {
+    //计算滚动高度
+    double height = 0.0;
+    for (int i = 0; i < index; ++i) {
+      height += _MenuTypeDescHeight + _menus[i].foods.length * _MenuHeight;
+    }
+
+    _menuScrollController.animateTo(
+      height,
+      duration: new Duration(
+        milliseconds: 400,
+      ),
+      curve: Curves.linear,
+    );
+    setState(() {
+      _menuIndex = index;
+    });
+  }
+
   Widget _buildMenuFoods() {
     return new SizedBox.expand(
       child: new ListView.builder(
+        controller: _menuScrollController,
         itemCount: _menus == null ? 0 : _menus.length,
         itemBuilder: (BuildContext context, int i) {
           Menu menu = _menus[i];
