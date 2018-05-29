@@ -40,6 +40,7 @@ class ShopState extends State<Shop> {
   int _menuIndex = 0;
   ScrollController _menuTypeScrollController = new ScrollController();
   ScrollController _menuScrollController = new ScrollController();
+  bool _menuIndexChange = false;
 
   static const num _MenuTypeHeight = 60.0;
   static const num _MenuTypeDescHeight = 50.0;
@@ -320,14 +321,61 @@ class ShopState extends State<Shop> {
     for (int i = 0; i < index; ++i) {
       height += _MenuTypeDescHeight + _menus[i].foods.length * _MenuHeight;
     }
-
+    if (height > _menuScrollController.position.maxScrollExtent) {
+      height = _menuScrollController.position.maxScrollExtent;
+    }
+    _menuIndexChange = true;
     _menuScrollController.animateTo(
       height,
       duration: new Duration(
         milliseconds: 200,
       ),
       curve: Curves.linear,
+    ).then((value) {
+      _menuIndexChange = false;
+    });
+    setState(() {
+      _menuIndex = index;
+    });
+  }
+
+  int _getMenuIndexByRightScrollHeight(double height) {
+    double cHeight = 0.0;
+    if (height > 0) {
+      for (int i = 0; i < _menus.length; ++i) {
+        double menuHeight = _MenuTypeDescHeight + _menus[i].foods.length * _MenuHeight;
+        if (height >= cHeight && height < cHeight + menuHeight) {
+          return i;
+        }
+        cHeight += menuHeight;
+      }
+    }
+    if (height > cHeight) {
+      return _menus.length - 1;
+    }
+    return -1;
+  }
+
+  void _setMenuTypeByMenuScrolledIndex(int index) {
+    if (index == _menuIndex) {
+      return;
+    }
+
+    double height = 0.0;
+    for (int i = 0; i < index; ++i) {
+      height += _MenuTypeHeight;
+    }
+    if (height > _menuTypeScrollController.position.maxScrollExtent) {
+      height = _menuTypeScrollController.position.maxScrollExtent;
+    }
+    _menuTypeScrollController.animateTo(
+      height,
+      duration: new Duration(
+        milliseconds: 400,
+      ),
+      curve: Curves.linear,
     );
+
     setState(() {
       _menuIndex = index;
     });
@@ -335,98 +383,107 @@ class ShopState extends State<Shop> {
 
   Widget _buildMenuFoods() {
     return new SizedBox.expand(
-      child: new ListView.builder(
-        controller: _menuScrollController,
-        itemCount: _menus == null ? 0 : _menus.length,
-        itemBuilder: (BuildContext context, int i) {
-          Menu menu = _menus[i];
-          Column col = new Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[],
-          );
-          col.children.add(
-            new Container(
-              height: 50.0,
-              padding: new EdgeInsets.symmetric(horizontal: 10.0),
-              color: new Color(0xfff5f5f5),
-              child: new Row(
-                children: <Widget>[
-                  new Expanded(
-                    child: new Row(
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.alphabetic,
-                      children: <Widget>[
-                        new Padding(
-                          padding: new EdgeInsets.only(right: 5.0),
-                          child: new Text(
-                            menu.name,
-                            style: new TextStyle(
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        ),
-                        new Expanded(
-                          child: new Text(
-                            menu.description,
-                            overflow: TextOverflow.ellipsis,
-                            style: new TextStyle(
-                              fontSize: 10.0,
-                              color: new Color(0xff999999),
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  new Icon(
-                    Icons.more_horiz,
-                    color: new Color(0xff999999),
-                    size: 20.0,
-                  )
-                ],
-              ),
-            ),
-          );
-          for (var food in menu.foods) {
-            var foodStack = new Stack(
+      child: new NotificationListener<ScrollUpdateNotification>(
+        onNotification: (ScrollUpdateNotification notification) {
+          if (_menuIndexChange) {
+            return;
+          }
+          int index = _getMenuIndexByRightScrollHeight(notification.metrics.pixels);
+          _setMenuTypeByMenuScrolledIndex(index);
+        },
+        child: new ListView.builder(
+          controller: _menuScrollController,
+          itemCount: _menus == null ? 0 : _menus.length,
+          itemBuilder: (BuildContext context, int i) {
+            Menu menu = _menus[i];
+            Column col = new Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[],
             );
-            foodStack.children.add(_buildFood(food));
-            if (food.attributes.length > 0) {
-              Map<String, dynamic> attr = _getNewAttrTag(food);
-              if (attr != null) {
-                foodStack.children.add(
-                    new Positioned(
-                      top: -20.0,
-                      left: -20.0,
-                      child: new Transform.rotate(
-                        angle: -Math.pi / 4,
-                        child: Container(
-                          width: 40.0,
-                          height: 40.0,
-                          color: new Color(0xff4cd964),
-                          child: new Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: <Widget>[
-                              new Text(
-                                '新品',
-                                style: new TextStyle(
-                                  color: Style.backgroundColor,
-                                  fontSize: 9.0,
-                                ),
-                              )
-                            ],
+            col.children.add(
+              new Container(
+                height: 50.0,
+                padding: new EdgeInsets.symmetric(horizontal: 10.0),
+                color: new Color(0xfff5f5f5),
+                child: new Row(
+                  children: <Widget>[
+                    new Expanded(
+                      child: new Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
+                        children: <Widget>[
+                          new Padding(
+                            padding: new EdgeInsets.only(right: 5.0),
+                            child: new Text(
+                              menu.name,
+                              style: new TextStyle(
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ),
+                          new Expanded(
+                            child: new Text(
+                              menu.description,
+                              overflow: TextOverflow.ellipsis,
+                              style: new TextStyle(
+                                fontSize: 10.0,
+                                color: new Color(0xff999999),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                    new Icon(
+                      Icons.more_horiz,
+                      color: new Color(0xff999999),
+                      size: 20.0,
+                    )
+                  ],
+                ),
+              ),
+            );
+            for (var food in menu.foods) {
+              var foodStack = new Stack(
+                children: <Widget>[],
+              );
+              foodStack.children.add(_buildFood(food));
+              if (food.attributes.length > 0) {
+                Map<String, dynamic> attr = _getNewAttrTag(food);
+                if (attr != null) {
+                  foodStack.children.add(
+                      new Positioned(
+                        top: -20.0,
+                        left: -20.0,
+                        child: new Transform.rotate(
+                          angle: -Math.pi / 4,
+                          child: Container(
+                            width: 40.0,
+                            height: 40.0,
+                            color: new Color(0xff4cd964),
+                            child: new Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: <Widget>[
+                                new Text(
+                                  '新品',
+                                  style: new TextStyle(
+                                    color: Style.backgroundColor,
+                                    fontSize: 9.0,
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    )
-                );
+                      )
+                  );
+                }
               }
+              col.children.add(foodStack);
             }
-            col.children.add(foodStack);
-          }
-          return col;
-        },
+            return col;
+          },
+        ),
       ),
     );
   }
