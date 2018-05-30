@@ -11,6 +11,7 @@ import '../config/config.dart';
 import '../components/head_bar.dart';
 import '../style/style.dart';
 import '../utils/utils.dart';
+import '../components/shopping_cart.dart';
 
 class Shop extends StatefulWidget {
   Shop({
@@ -168,14 +169,7 @@ class ShopState extends State<Shop> {
                 ),
               ),
             ),
-            bottomNavigationBar: new BottomAppBar(
-              hasNotch: true,
-              child: new Row(
-                children: <Widget>[
-                  new Icon(Icons.menu),
-                ],
-              ),
-            ),
+            bottomNavigationBar: new ShoppingCart(),
           ),
         ),
       ],

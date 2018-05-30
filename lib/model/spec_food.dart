@@ -27,7 +27,7 @@ class SpecFood {
   int itemId;
   String name;
   int originalPrice;
-  int packingFee;
+  num packingFee;
   String pinyinName;
   int price;
   int promotionStock;
