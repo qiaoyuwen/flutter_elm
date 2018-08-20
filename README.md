@@ -4,7 +4,7 @@
 
 因为是利用业余时间来做的，所以呢暂时项目还在进行中。
 
-这个项目的素材是仿照vue中一个比较出名的样例项目，地址：https://github.com/bailicangdu/vue2-elm。
+这个项目的素材是仿照vue中一个比较出名的样例项目，地址：https://github.com/bailicangdu/vue2-elm 。
 
 ## 项目运行
 
